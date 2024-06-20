@@ -15,24 +15,73 @@ satid_hex2FM = [247 249 43 44 47 54 55 73];
 
 %fid = fopen('../../../OnOrbitData/FM8/cyg08_raw_if_20170825_141629_meta.bin');
 %fid = fopen('../../../CYGNSS/RawIF/May15_Australia/RawIF_Data/cyg08_raw_if_20180515_215055_meta.bin');
-fid = fopen('/media/gleason/Elements/CYGNSS_Data/rawIF/136/cyg08_raw_if_20200515_231925_meta.bin');
+%fid = fopen('/media/gleason/Elements/CYGNSS_Data/rawIF/136/cyg08_raw_if_20200515_231925_meta.bin');
 
-satIDhex = dec2hex(fread(fid,1,'uint8')); % hex ID of satellite (need "decoder ring" to match to FM#)
-satIDdec = hex2dec(satIDhex);
-satID_FM = find(satid_hex2FM == satIDdec);
+raw_data_path           = '/Users/thb/Kode/NTNU/gnssr-processing/CYGNSS-Processing/makefile_build_c/RawIFData'; % can be any location on your computer
+raw_data_meta_file      = 'cyg05_raw_if_s20220727_035832_e20220727_035933_meta.bin'; % can be any cygnss *_meta.bin file
+fid                     = fopen( fullfile(raw_data_path,raw_data_meta_file) );
 
-hdr = num2str(fread(fid,4,'char'),'%s'); % "DRT0" header
-gpsweek = fread(fid,1,'uint16','ieee-be'); % GPS week (read in Big Endian order)
-gpssecs = fread(fid,1,'uint32','ieee-be'); % GPS seconds (as 4 byte uint)
-dataformat = fread(fid,1,'uint8'); % decimal
+
+satIDhex                = dec2hex(fread(fid,1,'uint8')); % hex ID of satellite (need "decoder ring" to match to FM#)
+satIDdec                = hex2dec(satIDhex);
+satID_FM                = find(satid_hex2FM == satIDdec);
+
+hdr                     = num2str(fread(fid,4,'char'),'%s'); % "DRT0" header
+gpsweek                 = fread(fid,1,'uint16','ieee-be'); % GPS week (read in Big Endian order)
+gpssecs                 = fread(fid,1,'uint32','ieee-be'); % GPS seconds (as 4 byte uint)
+dataformat              = fread(fid,1,'uint8'); % decimal
+samplingrate            = fread(fid,1,'uint32','ieee-be'); % sampling rate % (read in Big Endian order)
+
+ch0FrontendSelection    = fread(fid,1,'uint8'); % (read in Big Endian order)
+ch0LOFrequency          = fread(fid,1,'uint32','ieee-be'); % frequnecy (Hz) % (read in Big Endian order)
+ch1FrontendSelection    = fread(fid,1,'uint8'); % (read in Big Endian order)
+ch1LOFrequency          = fread(fid,1,'uint32','ieee-be'); % frequnecy (Hz) % (read in Big Endian order)
+ch2FrontendSelection    = fread(fid,1,'uint8'); % (read in Big Endian order)
+ch2LOFrequency          = fread(fid,1,'uint32','ieee-be'); % frequnecy (Hz) % (read in Big Endian order)
+ch3FrontendSelection    = fread(fid,1,'uint8'); % (read in Big Endian order)
+ch3LOFrequency          = fread(fid,1,'uint32','ieee-be'); % frequnecy (Hz) % (read in Big Endian order)
 
 % See 148-0354-2 CYGNSS Raw IF Data File Format.pdf for rest of data entries
 % The gpssecs and dataformat are the 2 most important
 
 %satIDhex
-satID_FM
-gpsweek
-gpssecs
+% satID_FM
+% gpsweek
+% gpssecs
+
+sec_per_week                    = 604800;       % 3600*24*7
+diff_gps_time_utc_time          = 18;           % number of leap seconds
+numb_weeks                      = gpsweek;     % should NOT add another week due to zero index since numb_weeks are the weeks that are already passed 
+sec_from_gps_start              = numb_weeks*sec_per_week + gpssecs - diff_gps_time_utc_time;
+
+
+ReferenceDate = datetime('06/01/1980',...
+             'InputFormat', 'dd/MM/yyyy',...
+             'TimeZone',    'UTC');
+
+numb_days   = sec_from_gps_start/(3600*24);
+Days        = caldays( floor( numb_days ) );
+
+numb_hours  = (numb_days - floor(numb_days))*24;
+Hours       = hours( floor(numb_hours) );
+
+numb_min    = (numb_hours - floor(numb_hours))*60;
+Minutes     = minutes( floor(numb_min) );
+
+numb_sec    = (numb_min - floor(numb_min))*60;
+Seconds     = seconds( numb_sec );
+
+Date        = ReferenceDate + Days + Hours + Minutes + Seconds;
+
+
+fprintf('____________________________________________________________________________\n')
+fprintf('Sat id: %d(0x%s). GPS week:sec %d:%d. Sampling rate: %.3f MHz\n', satID_FM, satIDhex,gpsweek, gpssecs, double(samplingrate)*1e-6)
+fprintf('Date (Y-M-S H:M:S): %d-%d-%d %d:%d:%.3f \n', Date.Year, Date.Month, Date.Day, Date.Hour, Date.Minute, Date.Second );
+fprintf('Channel 0: Front end selection = %d. LO Frequency %.3f MHz\n', ch0FrontendSelection, double(ch0LOFrequency)*1e-6)
+fprintf('Channel 1: Front end selection = %d. LO Frequency %.3f MHz\n', ch1FrontendSelection, double(ch1LOFrequency)*1e-6)
+fprintf('Channel 2: Front end selection = %d. LO Frequency %.3f MHz\n', ch2FrontendSelection, double(ch2LOFrequency)*1e-6)
+fprintf('Channel 3: Front end selection = %d. LO Frequency %.3f MHz\n', ch3FrontendSelection, double(ch3LOFrequency)*1e-6)
+
 
 if(dataformat == 0)
   disp('Channel 1, I Only ... double check, unusual')
@@ -47,6 +96,6 @@ elseif(dataformat == 4)
 else
   disp('Invalid format type')
 end  
+fprintf('____________________________________________________________________________\n')
 
-
-%fclose(fid);
+fclose(fid);
