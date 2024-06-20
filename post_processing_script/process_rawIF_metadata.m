@@ -31,7 +31,7 @@ for idx = 1:n_files
     fprintf('____________________________________________________________________________\n')
     fprintf('File name: %s\n', meta_files(idx).name);
 
-    fid                     = fopen( fullfile(raw_data_path,raw_data_meta_file) );
+    fid                     = fopen( fullfile( data_path, meta_files(idx).name) );
     
     satIDhex                = dec2hex(fread(fid,1,'uint8')); % hex ID of satellite (need "decoder ring" to match to FM#)
     satIDdec                = hex2dec(satIDhex);
