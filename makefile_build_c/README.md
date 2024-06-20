@@ -28,7 +28,11 @@ Docker is recommended using Mac and Windows (Windows Subsystem for Linux (WSL)).
 
 * Install Docker see  [https://docs.docker.com/get-docker/](https://docs.docker.com/get-docker/)
 * Start Docker
-* Build with Docker container by runing 
+* Make cygnss.sh executable
+```
+chmod +x cygnss.sh 
+```
+* Build with Docker container by running 
 ```
 ./cygnss.sh build
 ```
@@ -47,10 +51,13 @@ in terminal
 ### Process using Docker container
 * Run 
 ```
-./cygnss.sh
+./cygnss.sh run
 ```
-in terminal to run processing based on config in 'CYGNSS_DDMP_config.dat' on or './cygnss.sh run ANOTHERDATFILE.dat'
-
+in terminal to run processing based on config in 'CYGNSS_DDMP_config.dat' on or
+```
+ ./cygnss.sh run ANOTHERDATFILE.dat'
+```
+in the terminal to specify another .dat that used when building process via the container.
 ### Output
 * Output file is 'Processed_DDMs.bin
 
