@@ -47,10 +47,13 @@ in terminal
 ### Process using Docker container
 * Run 
 ```
-./cygnss.sh
+./cygnss.sh run
 ```
-in terminal to run processing based on config in 'CYGNSS_DDMP_config.dat' on or './cygnss.sh run ANOTHERDATFILE.dat'
-
+in terminal to run processing based on config in 'CYGNSS_DDMP_config.dat' on or
+```
+ ./cygnss.sh run ANOTHERDATFILE.dat'
+```
+in the terminal to specify another .dat that used when building process via the container.
 ### Output
 * Output file is 'Processed_DDMs.bin
 
