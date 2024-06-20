@@ -28,7 +28,11 @@ Docker is recommended using Mac and Windows (Windows Subsystem for Linux (WSL)).
 
 * Install Docker see  [https://docs.docker.com/get-docker/](https://docs.docker.com/get-docker/)
 * Start Docker
-* Build with Docker container by runing 
+* Make cygnss.sh executable
+```
+chmod +x cygnss.sh 
+```
+* Build with Docker container by running 
 ```
 ./cygnss.sh build
 ```
