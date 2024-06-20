@@ -29,7 +29,8 @@ for idx = 1:n_files
 % raw_data_meta_file      = 'cyg05_raw_if_s20220727_035832_e20220727_035933_meta.bin'; % can be any cygnss *_meta.bin file
 
     fprintf('____________________________________________________________________________\n')
-    fprintf('File name: %s\n', meta_files(idx).name);
+    file_name = meta_files(idx).name;
+    fprintf('File name: %s\n', file_name);
 
     fid                     = fopen( fullfile( data_path, meta_files(idx).name) );
     
@@ -62,16 +63,39 @@ for idx = 1:n_files
     
     fprintf('Sat id: %d(0x%s). Sampling rate: %.3f MHz\n', satID_FM, satIDhex, double(samplingrate)*1e-6)
     if display_time
-        fprintf('GPS week:sec %d:%d\n', gpsweek, gpssecs );
+        fprintf('GPS week: %d. GPS sec: %d\n', gpsweek, gpssecs );
         
-        % calculate UTC date
-        sec_per_week                    = 604800;       % 3600*24*7
-        diff_gps_time_utc_time          = 18;           % number of leap seconds
-        numb_weeks                      = gpsweek;     % should NOT add another week due to zero index since numb_weeks are the weeks that are already passed 
-        sec_from_gps_start              = numb_weeks*sec_per_week + gpssecs - diff_gps_time_utc_time;
+        year_start          = str2double( file_name(15:18) );
+        month_start         = str2double( file_name(19:20) );
+        day_start           = str2double( file_name(21:22) );
+        hour_start          = str2double( file_name(24:25) );
+        minute_start        = str2double( file_name(26:27) );
+        second_start        = str2double( file_name(28:29) );
+
+        year_end            = str2double( file_name(32:35) );
+        month_end           = str2double( file_name(36:37) );
+        day_end             = str2double( file_name(38:39) );
+        hour_end            = str2double( file_name(41:42) );
+        minute_end          = str2double( file_name(43:44) );
+        second_end          = str2double( file_name(45:46) );
+
+        total_sec_of_start  = second_start + minute_start*60 + hour_start*3600 + day_start*3600*24;
+        total_sec_of_end    = second_end + minute_end*60 + hour_end*3600 + day_end*3600*24;
+        length_time_of_data = total_sec_of_end - total_sec_of_start;
+        fprintf('Length of data (seconds): %.3f\n',length_time_of_data);
+
+        fprintf('Date start (Y-M-S H:M:S): %d-%d-%d %d:%d:%.3f \n', year_start, month_start, day_start, hour_start, minute_start, second_start );
+        fprintf('Date end   (Y-M-S H:M:S): %d-%d-%d %d:%d:%.3f \n', year_end, month_end, day_end, hour_end, minute_end, second_end );
+
+        % calculate UTC date from GPS time
         if exist('OCTAVE_VERSION', 'builtin') > 0 % running octave
-            % octave code to be added
-        else
+            % datatime not yet implemented in Octave
+        else            
+            sec_per_week                    = 604800;    % 3600*24*7
+            diff_gps_time_utc_time          = 18;         % number of leap seconds
+            numb_weeks                      = gpsweek;   % should NOT add another week due to zero index since numb_weeks are the weeks that are already passed 
+            sec_from_gps_start              = numb_weeks*sec_per_week + gpssecs - diff_gps_time_utc_time;
+
             ReferenceDate = datetime('06/01/1980',...
                          'InputFormat', 'dd/MM/yyyy',...
                          'TimeZone',    'UTC');
@@ -84,9 +108,10 @@ for idx = 1:n_files
             numb_sec    = (numb_min - floor(numb_min))*60;
             Seconds     = seconds( numb_sec );
             Date        = ReferenceDate + Days + Hours + Minutes + Seconds;
-            fprintf('Date (Y-M-S H:M:S): %d-%d-%d %d:%d:%.3f \n', Date.Year, Date.Month, Date.Day, Date.Hour, Date.Minute, Date.Second );
+            fprintf('Date from GPS time (Y-M-S H:M:S): %d-%d-%d %d:%d:%.3f \n', Date.Year, Date.Month, Date.Day, Date.Hour, Date.Minute, Date.Second );
         end
     end
+
     if display_front_end_info
         fprintf('Channel 0: Front end selection = %d. LO Frequency %.3f MHz\n', ch0FrontendSelection, double(ch0LOFrequency)*1e-6)
         fprintf('Channel 1: Front end selection = %d. LO Frequency %.3f MHz\n', ch1FrontendSelection, double(ch1LOFrequency)*1e-6)
