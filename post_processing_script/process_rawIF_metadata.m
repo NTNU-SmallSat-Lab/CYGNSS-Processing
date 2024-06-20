@@ -69,20 +69,23 @@ for idx = 1:n_files
         diff_gps_time_utc_time          = 18;           % number of leap seconds
         numb_weeks                      = gpsweek;     % should NOT add another week due to zero index since numb_weeks are the weeks that are already passed 
         sec_from_gps_start              = numb_weeks*sec_per_week + gpssecs - diff_gps_time_utc_time;
-        
-        ReferenceDate = datetime('06/01/1980',...
-                     'InputFormat', 'dd/MM/yyyy',...
-                     'TimeZone',    'UTC');
-        numb_days   = sec_from_gps_start/(3600*24);
-        Days        = caldays( floor( numb_days ) );
-        numb_hours  = (numb_days - floor(numb_days))*24;
-        Hours       = hours( floor(numb_hours) ); 
-        numb_min    = (numb_hours - floor(numb_hours))*60;
-        Minutes     = minutes( floor(numb_min) );
-        numb_sec    = (numb_min - floor(numb_min))*60;
-        Seconds     = seconds( numb_sec );
-        Date        = ReferenceDate + Days + Hours + Minutes + Seconds;
-        fprintf('Date (Y-M-S H:M:S): %d-%d-%d %d:%d:%.3f \n', Date.Year, Date.Month, Date.Day, Date.Hour, Date.Minute, Date.Second );
+        if exist('OCTAVE_VERSION', 'builtin') > 0 % running octave
+            % octave code to be added
+        else
+            ReferenceDate = datetime('06/01/1980',...
+                         'InputFormat', 'dd/MM/yyyy',...
+                         'TimeZone',    'UTC');
+            numb_days   = sec_from_gps_start/(3600*24);
+            Days        = caldays( floor( numb_days ) );
+            numb_hours  = (numb_days - floor(numb_days))*24;
+            Hours       = hours( floor(numb_hours) ); 
+            numb_min    = (numb_hours - floor(numb_hours))*60;
+            Minutes     = minutes( floor(numb_min) );
+            numb_sec    = (numb_min - floor(numb_min))*60;
+            Seconds     = seconds( numb_sec );
+            Date        = ReferenceDate + Days + Hours + Minutes + Seconds;
+            fprintf('Date (Y-M-S H:M:S): %d-%d-%d %d:%d:%.3f \n', Date.Year, Date.Month, Date.Day, Date.Hour, Date.Minute, Date.Second );
+        end
     end
     if display_front_end_info
         fprintf('Channel 0: Front end selection = %d. LO Frequency %.3f MHz\n', ch0FrontendSelection, double(ch0LOFrequency)*1e-6)
