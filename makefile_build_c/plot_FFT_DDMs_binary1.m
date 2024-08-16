@@ -9,8 +9,8 @@ colors = ['k' 'b' 'g' 'r' 'm' 'c'];
 
 sc_id = 8;
 
-plot_full_ddms = 0;
-%plot_full_ddms = 1;
+%plot_full_ddms = 0;
+plot_full_ddms = 1;
 
 %plot_cropped_ddms = 0;
 plot_cropped_ddms = 1;
