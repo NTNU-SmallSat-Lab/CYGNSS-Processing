@@ -38,6 +38,12 @@ chmod +x cygnss.sh
 ```
 in terminal. Bash script is handling the dependencies and any updates of these.
 
+### Using Docker with WSL
+You can simply download and install Docker for Windows, and link it to your WSL distro. Some useful information is found here: 
+* Install Docker for Windows: https://docs.docker.com/desktop/setup/install/windows-install/
+* Docker only works on WSL2, so make sure you have that, or convert your install: https://ericsysmin.com/2019/07/13/converting-wsl-1-operating-systems-to-wsl-2-on-windows/
+* Enable docker for WSL: https://docs.docker.com/desktop/features/wsl/
+
 ## Run instructions
 * Update line 22 in 'CYGNSS_DDMP_config.dat' with downloaded .bin file containing raw IF samples
 
