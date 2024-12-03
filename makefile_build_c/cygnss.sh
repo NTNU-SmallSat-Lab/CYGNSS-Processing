@@ -14,7 +14,7 @@ run() {
 		docker run --name cygnssdocker cygnss
 	else
 		DAT_FILE=${PWD}/$1
-		echo "Running the CYGNSS processsing with provided config file"
+		echo "Running the CYGNSS processsing with provided config file: "${DAT_FILE}
 		docker run --name cygnssdocker -v ${DAT_FILE}:/app/CYGNSS_DDMP_config.dat cygnss
 	fi
 	echo "Copying processed DDM file to host"
