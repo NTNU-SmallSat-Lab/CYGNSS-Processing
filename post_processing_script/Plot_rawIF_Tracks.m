@@ -114,6 +114,7 @@ bb = aa(isnan(aa)==0);
 SP_mean_gain4 = mean(bb)
 
 %% New matlab colors
+black         = "#FFFFFF";
 new_blue      = "#0072BD";
 new_red       = "#D95319";
 new_yellow    = "#EDB120"
@@ -122,37 +123,56 @@ new_green     = "#77AC30";
 new_cyan      = "#4DBEEE";
 new_burgundy  = "#A2142F"
 
+%linemarker        = '*'
+linemarker        = '.'
+
 figure(1)
 hold on
 load('mapworld.mat')
 plot(world_lon,world_lat)
-plot(SP_lon_1,SP_lat_1,'k*')
-plot(SP_lon_2,SP_lat_2, '*', 'color', new_blue)
-plot(SP_lon_3,SP_lat_3, '*', 'color', new_green)
-plot(SP_lon_4,SP_lat_4, '*', 'color', new_red)
+plot(SP_lon_1,SP_lat_1, linemarker, 'color', black)
+plot(SP_lon_2,SP_lat_2, linemarker, 'color', new_blue)
+plot(SP_lon_3,SP_lat_3, linemarker, 'color', new_green)
+plot(SP_lon_4,SP_lat_4, linemarker, 'color', new_red)
 xlabel('Longitude')
 ylabel('Latitude')
 title('Specular Points Over Raw IF Interval')
 grid on
 
+zoom_padding_lat_lon = 35; % smaller less padding
 figure(2)
 hold on
-plot(UTC_hours_rawIF,prn_code1,'k*')
-plot(UTC_hours_rawIF,prn_code2, '*', 'color', new_blue)
-plot(UTC_hours_rawIF,prn_code3, '*', 'color', new_green)
-plot(UTC_hours_rawIF,prn_code4, '*', 'color', new_red)
+load('mapworld.mat')
+plot(world_lon,world_lat)
+plot(SP_lon_1,SP_lat_1, linemarker, 'color', black)
+plot(SP_lon_2,SP_lat_2, linemarker, 'color', new_blue)
+plot(SP_lon_3,SP_lat_3, linemarker, 'color', new_green)
+plot(SP_lon_4,SP_lat_4, linemarker, 'color', new_red)
+xlim( [min([SP_lon_1,SP_lon_2,SP_lon_3,SP_lon_4])-zoom_padding_lat_lon max([SP_lon_1,SP_lon_2,SP_lon_3,SP_lon_4])+zoom_padding_lat_lon] )
+ylim( [min([SP_lat_1,SP_lat_2,SP_lat_3,SP_lat_4])-zoom_padding_lat_lon max([SP_lat_1,SP_lat_2,SP_lat_3,SP_lat_4])+zoom_padding_lat_lon] )
+xlabel('Longitude')
+ylabel('Latitude')
+title('Specular Points Over Raw IF Interval')
+grid on
+
+figure(3)
+hold on
+plot(UTC_hours_rawIF,prn_code1, linemarker, 'color', black)
+plot(UTC_hours_rawIF,prn_code2, linemarker, 'color', new_blue)
+plot(UTC_hours_rawIF,prn_code3, linemarker, 'color', new_green)
+plot(UTC_hours_rawIF,prn_code4, linemarker, 'color', new_red)
 xlabel('Time, GPS Secs or UTC Hour')
 ylabel('PRN')
 title('PRN Codes vs UTC Hour, Filtered Interval')
 legend({'Ch 1','Ch 2','Ch 3','Ch 4'},'location','NorthWest')
 grid on
 
-figure(3)
+figure(4)
 hold on
-plot(UTC_hours_rawIF,ddm_ant1,'k*')
-plot(UTC_hours_rawIF,ddm_ant2+0.1, '*', 'color', new_blue)
-plot(UTC_hours_rawIF,ddm_ant3+0.2, '*', 'color', new_green)
-plot(UTC_hours_rawIF,ddm_ant4+0.3, '*', 'color', new_red)
+plot(UTC_hours_rawIF,ddm_ant1, linemarker, 'color', black)
+plot(UTC_hours_rawIF,ddm_ant2+0.1, linemarker, 'color', new_blue)
+plot(UTC_hours_rawIF,ddm_ant3+0.2, linemarker, 'color', new_green)
+plot(UTC_hours_rawIF,ddm_ant4+0.3, linemarker, 'color', new_red)
 xlabel('UTC Hour')
 ylabel('Antenna (with offset), Star=2, Port=3')
 title('DMR Antenna vs UTC Hour, Filtered Interval')
