@@ -20,36 +20,36 @@ prn_code = double(ncread(filename,'prn_code'));
 ddm_ant = double(ncread(filename,'ddm_ant'));
 ddm_chan = double(ncread(filename,'ddm'));
 
-utc_time = double(ncread(filename,'ddm_timestamp_utc')); 
-gpsweek_ddm = double(ncread(filename,'ddm_timestamp_gps_week')); 
-gpssecs_ddm = double(ncread(filename,'ddm_timestamp_gps_sec')); 
+utc_time = double(ncread(filename,'ddm_timestamp_utc'));
+gpsweek_ddm = double(ncread(filename,'ddm_timestamp_gps_week'));
+gpssecs_ddm = double(ncread(filename,'ddm_timestamp_gps_sec'));
 
-sc_pos_x = double(ncread(filename,'sc_pos_x')); 
-sc_pos_y = double(ncread(filename,'sc_pos_y')); 
-sc_pos_z = double(ncread(filename,'sc_pos_z')); 
-sc_vel_x = double(ncread(filename,'sc_vel_x')); 
-sc_vel_y = double(ncread(filename,'sc_vel_y')); 
-sc_vel_z = double(ncread(filename,'sc_vel_z')); 
+sc_pos_x = double(ncread(filename,'sc_pos_x'));
+sc_pos_y = double(ncread(filename,'sc_pos_y'));
+sc_pos_z = double(ncread(filename,'sc_pos_z'));
+sc_vel_x = double(ncread(filename,'sc_vel_x'));
+sc_vel_y = double(ncread(filename,'sc_vel_y'));
+sc_vel_z = double(ncread(filename,'sc_vel_z'));
 SC_longitude = double(ncread(filename,'sc_lon'));
 SC_latitude = double(ncread(filename,'sc_lat'));
 SC_altitude = double(ncread(filename,'sc_alt'));
 rx_clk_bias = double(ncread(filename,'rx_clk_bias'));
 rx_clk_bias_rate = double(ncread(filename,'rx_clk_bias_rate'));
-  
-tx_pos_x = double(ncread(filename,'tx_pos_x')); 
-tx_pos_y = double(ncread(filename,'tx_pos_y')); 
-tx_pos_z = double(ncread(filename,'tx_pos_z')); 
-tx_vel_x = double(ncread(filename,'tx_vel_x')); 
-tx_vel_y = double(ncread(filename,'tx_vel_y')); 
-tx_vel_z = double(ncread(filename,'tx_vel_z')); 
 
-sc_roll = double(ncread(filename,'sc_roll')); 
-sc_pitch = double(ncread(filename,'sc_pitch')); 
-sc_yaw = double(ncread(filename,'sc_yaw')); 
+tx_pos_x = double(ncread(filename,'tx_pos_x'));
+tx_pos_y = double(ncread(filename,'tx_pos_y'));
+tx_pos_z = double(ncread(filename,'tx_pos_z'));
+tx_vel_x = double(ncread(filename,'tx_vel_x'));
+tx_vel_y = double(ncread(filename,'tx_vel_y'));
+tx_vel_z = double(ncread(filename,'tx_vel_z'));
 
-sp_pos_x = double(ncread(filename,'sp_pos_x')); 
-sp_pos_y = double(ncread(filename,'sp_pos_y')); 
-sp_pos_z = double(ncread(filename,'sp_pos_z')); 
+sc_roll = double(ncread(filename,'sc_roll'));
+sc_pitch = double(ncread(filename,'sc_pitch'));
+sc_yaw = double(ncread(filename,'sc_yaw'));
+
+sp_pos_x = double(ncread(filename,'sp_pos_x'));
+sp_pos_y = double(ncread(filename,'sp_pos_y'));
+sp_pos_z = double(ncread(filename,'sp_pos_z'));
 sp_lon = double(ncread(filename,'sp_lon'));
 sp_lat = double(ncread(filename,'sp_lat'));
 sp_inc_angle =  double(ncread(filename,'sp_inc_angle'));
@@ -71,7 +71,11 @@ lna_temp_nadir_port = double(ncread(filename,'lna_temp_nadir_port'));
 % SOC L1a L1b and area values ... needed after E2ES for comparison
 raw_counts = double(ncread(filename,'raw_counts'));
 power_analog = double(ncread(filename,'power_analog'));
-power_digital = double(ncread(filename,'power_digital'));
+try
+  power_digital = double(ncread(filename,'power_digital'));
+catch
+  fprintf('Variable %s not part of netCDF file\n', 'power_digital')
+end
 eff_scatter = double(ncread(filename,'eff_scatter'));
 brcs = double(ncread(filename,'brcs'));
 
@@ -87,14 +91,25 @@ add_range_to_sp = double(ncread(filename,'add_range_to_sp'));
 
 lna_noise_figure = double(ncread(filename,'lna_noise_figure'));
 inst_gain = double(ncread(filename,'inst_gain'));
-radiometric_antenna_temp = double(ncread(filename,'radiometric_antenna_temp'));
-
-bit_ratio_hi_lo_starboard = double(ncread(filename,'bit_ratio_hi_lo_starboard'));
-bit_ratio_hi_lo_port = double(ncread(filename,'bit_ratio_hi_lo_port'));
+try
+  radiometric_antenna_temp = double(ncread(filename,'radiometric_antenna_temp'));
+catch
+  fprintf('Variable %s not part of netCDF file\n', 'radiometric_antenna_temp')
+end
+try
+  bit_ratio_hi_lo_starboard = double(ncread(filename,'bit_ratio_hi_lo_starboard'));
+catch
+  fprintf('Variable %s not part of netCDF file\n', 'bit_ratio_hi_lo_starboard')
+end
+try
+  bit_ratio_hi_lo_port = double(ncread(filename,'bit_ratio_hi_lo_port'));
+catch
+  fprintf('Variable %s not part of netCDF file\n', 'bit_ratio_hi_lo_port')
+end
 bit_null_offset_starboard = double(ncread(filename,'bit_null_offset_starboard'));
 bit_null_offset_port = double(ncread(filename,'bit_null_offset_port'));
 
-%ideal_scatter = double(ncread(filename,'ideal_scatter')); 
+%ideal_scatter = double(ncread(filename,'ideal_scatter'));
 box_ddma_scatter = double(ncread(filename,'nbrcs_scatter_area'));
 %eaf_ddma_scatter = double(ncread(filename,'eaf_ddma_scatter'));
 

@@ -11,10 +11,14 @@ format long
 % Parse meta data file
 
 % Set path and file name of meta data for this collection
-fid = fopen('../Input_DMR_Data_2Hz/cyg03_raw_if_s20200810_201245_e20200810_201345_meta.bin');
+%fid = fopen('../Input_DMR_Data_2Hz/cyg03_raw_if_s20200810_201245_e20200810_201345_meta.bin');
 
-process_rawIF_metadata
-fclose(fid);
+%process_rawIF_metadata
+%fclose(fid);
+file_path       = '/Users/thb/Library/CloudStorage/OneDrive-NTNU/Prosjekter/GNSS-R/CYGNSS data';
+meta_file       = 'cyg01_raw_if_s20180822_142659_e20180822_142759_meta.bin';
+level1_file     = 'cyg01.ddmi.s20180822-000000-e20180822-235959.l1.power-brcs.a32.d33.nc'
+[satID_FM,gpsweek, gpssecs]  = process_rawIF_metadata( file_path, meta_file );
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 colors = ['c', 'k', 'b', 'g', 'r', 'm'];
@@ -22,8 +26,9 @@ colors = ['c', 'k', 'b', 'g', 'r', 'm'];
 if(exist('gpssecs_ddm') == 0)
 
   % 2Hz CYGNSS Level 1 netcdf file
-  filename = '../Input_DMR_Data_2Hz/cyg03.ddmi.s20200810-000000-e20200810-235959.l1.power-brcs.a21.d21.nc'; % SLV, 2Hz
-  
+  %filename = '../Input_DMR_Data_2Hz/cyg03.ddmi.s20200810-000000-e20200810-235959.l1.power-brcs.a21.d21.nc'; % SLV, 2Hz
+  filename = fullfile( file_path, level1_file )
+
   Load_CYGNSS_netCDF_Level1
 end
 
@@ -36,7 +41,7 @@ rawIF_duration = 60; % seconds
 samples_per_second = 2;
 
 % UTC hours  ... sort of useful
-utc_hour = utc_time./3600; 
+utc_hour = utc_time./3600;
 
 % find the index for this second in L1 netcdf file on the same day as the rawIF
 start_rawIF_idx = find(round(gpssecs_ddm) == start_raw_gpssec);
@@ -49,7 +54,8 @@ UTC_hours_rawIF = utc_hour(rawIF_idxs);
 
 % Grab SP locations for all 4 channels ... brut force ugly way
 SP_lat_1 = sp_lat(1,rawIF_idxs);
-SP_lon_1 = sp_lon(1,rawIF_idxs) - 360;
+%SP_lon_1 = sp_lon(1,rawIF_idxs) - 360;
+SP_lon_1 = sp_lon(1,rawIF_idxs);
 prn_code1 = prn_code(1,rawIF_idxs);
 PRN1 = prn_code1(1)
 ddm_ant1 = ddm_ant(1,rawIF_idxs);
@@ -63,7 +69,8 @@ bb = aa(isnan(aa)==0);
 SP_mean_gain1 = mean(bb)
 
 SP_lat_2 = sp_lat(2,rawIF_idxs);
-SP_lon_2 = sp_lon(2,rawIF_idxs) - 360;
+%SP_lon_2 = sp_lon(2,rawIF_idxs) - 360;
+SP_lon_2 = sp_lon(2,rawIF_idxs);
 prn_code2 = prn_code(2,rawIF_idxs);
 PRN2 = prn_code2(1)
 ddm_ant2 = ddm_ant(2,rawIF_idxs);
@@ -77,7 +84,8 @@ bb = aa(isnan(aa)==0);
 SP_mean_gain2 = mean(bb)
 
 SP_lat_3 = sp_lat(3,rawIF_idxs);
-SP_lon_3 = sp_lon(3,rawIF_idxs) - 360;
+%SP_lon_3 = sp_lon(3,rawIF_idxs) - 360;
+SP_lon_3 = sp_lon(3,rawIF_idxs);
 prn_code3 = prn_code(3,rawIF_idxs);
 PRN3 = prn_code3(1)
 ddm_ant3 = ddm_ant(3,rawIF_idxs);
@@ -91,7 +99,8 @@ bb = aa(isnan(aa)==0);
 SP_mean_gain3 = mean(bb)
 
 SP_lat_4 = sp_lat(4,rawIF_idxs);
-SP_lon_4 = sp_lon(4,rawIF_idxs) - 360;
+%SP_lon_4 = sp_lon(4,rawIF_idxs) - 360;
+SP_lon_4 = sp_lon(4,rawIF_idxs);
 prn_code4 = prn_code(4,rawIF_idxs);
 PRN4 = prn_code4(1)
 ddm_ant4 = ddm_ant(4,rawIF_idxs);
