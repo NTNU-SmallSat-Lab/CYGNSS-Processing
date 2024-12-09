@@ -135,7 +135,7 @@ plot(UTC_hours_rawIF,prn_code4,'r*')
 xlabel('Time, GPS Secs or UTC Hour')
 ylabel('PRN')
 title('PRN Codes vs UTC Hour, Filtered Interval')
-legend('Ch 1','Ch 2','Ch 3','Ch 4')
+legend({'Ch 1','Ch 2','Ch 3','Ch 4'},'location','NorthWest')
 grid on
 
 figure(3)
@@ -147,7 +147,7 @@ plot(UTC_hours_rawIF,ddm_ant4+0.3,'r*')
 xlabel('UTC Hour')
 ylabel('Antenna (with offset), Star=2, Port=3')
 title('DMR Antenna vs UTC Hour, Filtered Interval')
-legend('Ch 1','Ch 2','Ch 3','Ch 4')
+legend({'Ch 1','Ch 2','Ch 3','Ch 4'},'location','NorthWest')
 grid on
 
 figure(1)
