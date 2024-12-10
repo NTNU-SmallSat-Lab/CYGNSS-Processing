@@ -21,20 +21,25 @@ satid_hex2FM = [247 249 43 44 47 54 55 73];
 
 %% Path Config
 % path to processed DDM. Default 'Processed_DDMs.bin'
-ddm_bin_file_name = 'Processed_DDMs_cyg04_raw_if_s20171130_234500_e20171130_234600_data';
-%ddm_bin_file_name = 'Processed_DDMs_cyg01_raw_if_s20180822_142659_e20180822_142759_data';
+%ddm_bin_file_name = 'Processed_DDMs_cyg04_raw_if_s20171130_234500_e20171130_234600_data';
+ddm_bin_file_name = 'Processed_DDMs_cyg01_raw_if_s20180822_142659_e20180822_142759_data';
+ddm_bin_file_name = 'Processed_DDMs';
 %ddm_bin_file_name = 'Processed_DDMs_cyg08_raw_if_s20171230_000830_e20171230_000930_data';
 
 
 meta_data_path          = '/Users/thb/Kode/NTNU/CYGNSS-Processing/makefile_build_c/RawIFData'; % path of the processed raw if data's meta
+meta_data_path          = '/Users/thb/Library/CloudStorage/OneDrive-NTNU/Prosjekter/GNSS-R/CYGNSS data'; % path of the processed raw if data's meta
+
 meta_data_file_name     = 'cyg04_raw_if_s20171130_234500_e20171130_234600_meta.bin';
 %meta_data_file_name     = 'cyg01_raw_if_s20180822_142659_e20180822_142759_meta.bin';
 %meta_data_file_name     = 'cyg08_raw_if_s20171230_000830_e20171230_000930_meta.bin';
+meta_data_file_name     = 'cyg01_raw_if_s20180822_142659_e20180822_142759_meta.bin';
 meta_data_file          = fullfile( meta_data_path, meta_data_file_name );
 
 % finding space craft ID
 fid                     = fopen( meta_data_file );
 satIDhex                = dec2hex(fread(fid,1,'uint8')); % hex ID of satellite (need "decoder ring" to match to FM#)
+fclose(fid);
 satIDdec                = hex2dec(satIDhex);
 satID_FM                = find(satid_hex2FM == satIDdec);
 sc_id                   = satID_FM;
@@ -95,7 +100,12 @@ for DDM_idx = 1:numDDMentries
   GPSweek(DDM_idx) = fread(fid, 1, 'int');
   GPSSecond(DDM_idx) = fread(fid, 1, 'double');
   CurrentSecond(DDM_idx) = fread(fid, 1, 'double');
-  FileOffset(DDM_idx) = fread(fid, 1, 'unsigned long long');
+  if exist('OCTAVE_VERSION', 'builtin') > 0 % running octave
+    FileOffset(DDM_idx) = fread(fid, 1, 'unsigned long long');
+  else
+    FileOffset(DDM_idx) = fread(fid, 1, 'unsigned long');
+    blank               = fread(fid, 1, 'unsigned long');
+  end
   PRN(DDM_idx) = fread(fid, 1, 'short');
   StartDoppler(DDM_idx) = fread(fid, 1, 'double');
   EndDoppler(DDM_idx) = fread(fid, 1, 'double');
@@ -130,27 +140,31 @@ for DDM_idx = 1:numDDMentries
     SNR_dB(DDM_idx)
   end
 
-if(plot_delay_waveforms == 1)
-    figure(1);
+  if(plot_delay_waveforms == 1)
+    h = figure(1);
     color_idx = mod(DDM_idx,length(colors));
     if(color_idx == 0)
         color_idx = 6;
     end
-    plot(Delay_axis,DDM(max_dopp_idx,:),Color=colors(color_idx));
+    plot(Delay_axis,DDM(max_dopp_idx,:)*1e-9,Color=colors(color_idx));
     % 	plot(DDM(max_dopp_idx,:),Color=colors(color_idx));
-
+    ylabel('Signal Magntitude (power scale 1e-9)');
     str = sprintf("Delay Waveform: SC %d, PRN %d, DDM Number %d",sc_id, PRN(DDM_idx),DDM_idx);
     title(str)
+    grid on;
+    pause(1)
     if store_images
-        pause(1)
-        print ("-r600", sprintf("%s_wave_form_ddm.png",ddm_bin_file_name));
+        if exist('OCTAVE_VERSION', 'builtin') > 0 % running octave
+            print ("-r600", sprintf("%s_wave_form_ddm.png",ddm_bin_file_name));
+        else
+            exportgraphics(h,sprintf("%s_wave_form_ddm.png",ddm_bin_file_name),'Resolution',600)
+        end
     end
-
-end
+  end
 
 if(plot_cropped_ddms == 1)
   % plot cropped DDM
-  figure(100);
+  h = figure(100);
   imagesc(flipud(DDM2));
 %  imagesc(Doppler_axis2,Delay_axis2,flipud(DDM2));
   ylabel('Delay Bins');
@@ -162,20 +176,23 @@ if(plot_cropped_ddms == 1)
   drawnow;
 %  axis([3000 8000 470 490])
   pause(1)
-  print ("-r600", sprintf("%s_cropped_ddm.png",ddm_bin_file_name));
-
-
-if(0)
-    filename = ['images/' num2str(DDM_idx,"%03d") '_imageframe.jpg'];
-    print(filename,'-djpg')
-end
-
-
+  if store_images
+    if exist('OCTAVE_VERSION', 'builtin') > 0 % running octave
+        print ("-r600", sprintf("%s_cropped_ddm.png",ddm_bin_file_name));
+    else
+        exportgraphics(h,sprintf("%s_cropped_ddm.png",ddm_bin_file_name),'Resolution',600)
+    end
+  end
+  % 
+  % if(0)
+  %  filename = ['images/' num2str(DDM_idx,"%03d") '_imageframe.jpg'];
+  %  print(filename,'-djpg')
+  % end
 end
 
 if(plot_full_ddms == 1)
   % plot full DDM
-  figure(200);
+  h = figure(200);
 %  imagesc(Doppler_axis,Delay_axis,DDM');
   imagesc(DDM);
   ylabel('Delay (Code Phase)');
@@ -185,12 +202,16 @@ if(plot_full_ddms == 1)
   title(str)
   colorbar
   pause(1)
-  print ("-r600", sprintf("%s_full_ddm.png",ddm_bin_file_name));
+  if store_images
+    if exist('OCTAVE_VERSION', 'builtin') > 0 % running octave
+        print ("-r600", sprintf("%s_full_ddm.png",ddm_bin_file_name));
+    else
+        exportgraphics(h,sprintf("%s_full_ddm.png",ddm_bin_file_name),'Resolution',600)
+    end
+  end
 %  axis([startDoppler(DDM_idx) endDoppler(DDM_idx) 1 numDelays(DDM_idx) 0 6e12])
 end
-
-  pause(1);
-
+pause(1);
 end  % end DDM loop
 
 %PRN
