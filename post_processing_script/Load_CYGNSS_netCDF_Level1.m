@@ -7,8 +7,9 @@
 %close all
 %clear all
 
-pkg load netcdf
-
+if exist('OCTAVE_VERSION', 'builtin') > 0 % running octave
+    pkg load netcdf
+end
 %%%%%%%%%%%%%%%%%%%
 % L1 Data
 %%%%%%%%%%%%%%%%%%%
