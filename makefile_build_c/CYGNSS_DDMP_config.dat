@@ -3,7 +3,7 @@
 % Only select one search at a time (for now)
 
 % Cold Search flag
-% adjust other processing params 'T' -> only 1sec, 'D' -> wide Dopp range ~50k, zenith antenna (1) 'P' -> 1-10 non-coh
+% adjust other processing params 'T' -> only 1sec, 'D' -> wide Doppler range ~50k, zenith antenna (1) 'P' -> 1-10 non-coh
 ^C 0
 C 1
 
@@ -19,8 +19,8 @@ F ../Input_DMR_Data/cyg08_raw_if_20170825_141629_data.bin
 % Obs8, Amazon
 F ../Input_DMR_Data/cyg08_raw_if_20180125_141649_data.bin
 % Obs8, Australia 80 mile beach
-^F ./RawIFData/cyg08_raw_if_20180515_215055_data.bin
-
+^F ./RawIFData/cyg05_raw_if_s20220727_035832_e20220727_035933_data.bin
+^F ./RawIFData/cyg05_raw_if_s20220727_035832_e20220727_035933_data.bin
 % Define second by second center Doppler frequencies
 % D PRN, antenna, Doppler range Hz, Doppler step Hz, Doppler Start, First Derivative Doppler, Second Derivative Doppler 
 % Obs8

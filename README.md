@@ -40,10 +40,10 @@ Matlab/Octave code for analyzing on the results of the C code
 
 Note: Not all post-processing scripts are compatible with current Matlab versions. Octave is recommended.
 
-## Input Data Files
+## Raw intermediate frequency (IF) sample input data files
 CYGNSS Raw IF files that are used as input for this processing can be downloaded from the PO.DAAC at [https://podaac.jpl.nasa.gov/dataset/CYGNSS_L1_RAW_IF](https://podaac.jpl.nasa.gov/dataset/CYGNSS_L1_RAW_IF)
 
-Recommended download site: [NASA EarthData CMR Virtual Directories](https://cmr.earthdata.nasa.gov/virtual-directory/collections/C2036882037-POCLOUD/temporal)
+Recommended download site is [Search Granules](https://search.earthdata.nasa.gov/search/granules?p=C2036882037-POCLOUD) where one can search for for specific data products. An alternative is [NASA EarthData CMR Virtual Directories: CYGNSS Level 1 Raw Intermediate Frequency Data Record](https://cmr.earthdata.nasa.gov/virtual-directory/collections/C2036882037-POCLOUD/temporal) where one is clicking trough the published data by year, month and day.
 
 For batch download of multiple data [podaac.jpl.nasa.gov/dataset/CYGNSS_L1_RAW_IF)](https://podaac.jpl.nasa.gov/dataset/CYGNSS_L1_RAW_IF) and more specifically [Search Granules](https://search.earthdata.nasa.gov/search/granules?p=C2036882037-POCLOUD) is recommended.
 
@@ -56,3 +56,12 @@ For batch download of multiple data [podaac.jpl.nasa.gov/dataset/CYGNSS_L1_RAW_I
 * You will now be have several download options. If you have chosen only a few Granule IDs (data and meta files) you can hit the links listed under Download Files and accept then download if your system request that of you. If you have choosen several Granule IDs, hit Download Script instead. Then hit Save that in top right of the preview box of the script content. Follow the guide written for Linux (also works on Mac) or Windows enabling to execute the script. If you are a Windows user [Windows WSL](https://learn.microsoft.com/en-us/windows/wsl/) is recommended.
 * Execute the script in the folder of your choice. Enter your username (at [urs.earthdata.nasa.gov](https://urs.earthdata.nasa.gov/)) and hit enter. Then enter your password and hit enter. 
 The files (*data.bin and *meta.bin) is download to said folder. The download can take considerable time.
+
+## Other data products.
+University of Michigan (UMICH) is listing all of the CYGNSS data products [https://cygnss.engin.umich.edu/data-products/ ](ttps://cygnss.engin.umich.edu/data-products/)
+
+To download:
+* Go to [https://cygnss.engin.umich.edu/data-products/ ](ttps://cygnss.engin.umich.edu/data-products/)
+* Click on the data product of choice.
+* Then hit 'Data Access'
+* Click link under 'Search Granules' and do the search.
