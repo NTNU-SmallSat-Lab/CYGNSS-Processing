@@ -61,7 +61,7 @@ For batch download of multiple data [podaac.jpl.nasa.gov/dataset/CYGNSS_L1_RAW_I
 * Execute the script in the folder of your choice. Enter your username (at [urs.earthdata.nasa.gov](https://urs.earthdata.nasa.gov/)) and hit enter. Then enter your password and hit enter. 
 The files (*data.bin and *meta.bin) is download to said folder. The download can take considerable time.
 
-## Other data products.
+## Other data products
 University of Michigan (UMICH) is listing all of the CYGNSS data products [https://cygnss.engin.umich.edu/data-products/ ](ttps://cygnss.engin.umich.edu/data-products/)
 
 To download:
