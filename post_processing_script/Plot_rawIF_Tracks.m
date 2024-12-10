@@ -5,6 +5,7 @@
 % Updated Aug 2020 to account for 2Hz DDMs
 close all
 clear all
+clc
 format long
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -17,18 +18,18 @@ format long
 %fclose(fid);
 file_path       = '/Users/thb/Library/CloudStorage/OneDrive-NTNU/Prosjekter/GNSS-R/CYGNSS data';
 meta_file       = 'cyg01_raw_if_s20180822_142659_e20180822_142759_meta.bin';
-level1_file     = 'cyg01.ddmi.s20180822-000000-e20180822-235959.l1.power-brcs.a32.d33.nc'
+level1_file     = 'cyg01.ddmi.s20180822-000000-e20180822-235959.l1.power-brcs.a32.d33.nc'; % must end with .l1.power-brcs.aXX.dXX.nc
 [satID_FM,gpsweek, gpssecs]  = process_rawIF_metadata( file_path, meta_file );
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 colors = ['c', 'k', 'b', 'g', 'r', 'm'];
 
-if(exist('gpssecs_ddm') == 0)
+if(exist('gpssecs_ddm','var') == 0)
 
   % 2Hz CYGNSS Level 1 netcdf file
   %filename = '../Input_DMR_Data_2Hz/cyg03.ddmi.s20200810-000000-e20200810-235959.l1.power-brcs.a21.d21.nc'; % SLV, 2Hz
-  filename = fullfile( file_path, level1_file )
-
+  filename = fullfile( file_path, level1_file );
+  
   Load_CYGNSS_netCDF_Level1
 end
 
@@ -53,78 +54,90 @@ rawIF_idxs = [start_rawIF_idx:end_rawIF_idx];
 UTC_hours_rawIF = utc_hour(rawIF_idxs);
 
 % Grab SP locations for all 4 channels ... brut force ugly way
-SP_lat_1 = sp_lat(1,rawIF_idxs);
-%SP_lon_1 = sp_lon(1,rawIF_idxs) - 360;
-SP_lon_1 = sp_lon(1,rawIF_idxs);
-prn_code1 = prn_code(1,rawIF_idxs);
-PRN1 = prn_code1(1)
-ddm_ant1 = ddm_ant(1,rawIF_idxs);
-ANT1 = ddm_ant1(1)
-sp_dopp1 = sp_ddmi_dopp(1,rawIF_idxs);
-start_dopp1 = sp_dopp1(1)
-end_dopp1 = sp_dopp1(rawIF_duration);
-dopp_rate1 = (end_dopp1 - start_dopp1)/rawIF_duration
-aa = sp_rx_gain(1,rawIF_idxs);
-bb = aa(isnan(aa)==0);
-SP_mean_gain1 = mean(bb)
+SP_lat_1        = sp_lat(1,rawIF_idxs);
+% SP_lon_1        = sp_lon(1,rawIF_idxs) - 360;
+SP_lon_1        = sp_lon(1,rawIF_idxs);
+prn_code1       = prn_code(1,rawIF_idxs);
+PRN1            = prn_code1(1);
+ddm_ant1        = ddm_ant(1,rawIF_idxs);
+ANT1            = ddm_ant1(1);
+sp_dopp1        = sp_ddmi_dopp(1,rawIF_idxs);
+start_dopp1     = sp_dopp1(1);
+end_dopp1       = sp_dopp1(rawIF_duration);
+dopp_rate1      = (end_dopp1 - start_dopp1)/rawIF_duration;
+aa              = sp_rx_gain(1,rawIF_idxs);
+bb              = aa(isnan(aa)==0);
+SP_mean_gain1   = mean(bb);
 
-SP_lat_2 = sp_lat(2,rawIF_idxs);
-%SP_lon_2 = sp_lon(2,rawIF_idxs) - 360;
-SP_lon_2 = sp_lon(2,rawIF_idxs);
-prn_code2 = prn_code(2,rawIF_idxs);
-PRN2 = prn_code2(1)
-ddm_ant2 = ddm_ant(2,rawIF_idxs);
-ANT2 = ddm_ant2(1)
-sp_dopp2 = sp_ddmi_dopp(2,rawIF_idxs);
-start_dopp2 = sp_dopp2(1)
-end_dopp2 = sp_dopp2(rawIF_duration);
-dopp_rate2 = (end_dopp2 - start_dopp2)/rawIF_duration
-aa = sp_rx_gain(2,rawIF_idxs);
-bb = aa(isnan(aa)==0);
-SP_mean_gain2 = mean(bb)
+fprintf('Channel: 1. PRN: %d. Ant = %d. Start/Stop Dopper: %.3f/%.3f. Doppler rate: %.6f. SP mean gain: %.6f\n', PRN1, ANT1, start_dopp1, end_dopp1, dopp_rate1, SP_mean_gain1)
+
+
+SP_lat_2        = sp_lat(2,rawIF_idxs);
+%SP_lon_2        = sp_lon(2,rawIF_idxs) - 360;
+SP_lon_2        = sp_lon(2,rawIF_idxs);
+prn_code2       = prn_code(2,rawIF_idxs);
+PRN2            = prn_code2(1);
+ddm_ant2        = ddm_ant(2,rawIF_idxs);
+ANT2            = ddm_ant2(1);
+sp_dopp2        = sp_ddmi_dopp(2,rawIF_idxs);
+start_dopp2     = sp_dopp2(1);
+end_dopp2       = sp_dopp2(rawIF_duration);
+dopp_rate2      = (end_dopp2 - start_dopp2)/rawIF_duration;
+aa              = sp_rx_gain(2,rawIF_idxs);
+bb              = aa(isnan(aa)==0);
+SP_mean_gain2   = mean(bb);
+
+fprintf('Channel: 2. PRN: %d. Ant = %d. Start/Stop Dopper: %.3f/%.3f. Doppler rate: %.6f. SP mean gain: %.6f\n', PRN2, ANT2, start_dopp2, end_dopp2, dopp_rate2, SP_mean_gain2)
+
 
 SP_lat_3 = sp_lat(3,rawIF_idxs);
 %SP_lon_3 = sp_lon(3,rawIF_idxs) - 360;
 SP_lon_3 = sp_lon(3,rawIF_idxs);
 prn_code3 = prn_code(3,rawIF_idxs);
-PRN3 = prn_code3(1)
+PRN3 = prn_code3(1);
 ddm_ant3 = ddm_ant(3,rawIF_idxs);
-ANT3 = ddm_ant3(1)
+ANT3 = ddm_ant3(1);
 sp_dopp3 = sp_ddmi_dopp(3,rawIF_idxs);
-start_dopp3 = sp_dopp3(1)
+start_dopp3 = sp_dopp3(1);
 end_dopp3 = sp_dopp3(rawIF_duration);
-dopp_rate3 = (end_dopp3 - start_dopp3)/rawIF_duration
+dopp_rate3 = (end_dopp3 - start_dopp3)/rawIF_duration;
 aa = sp_rx_gain(3,rawIF_idxs);
 bb = aa(isnan(aa)==0);
-SP_mean_gain3 = mean(bb)
+SP_mean_gain3 = mean(bb);
 
-SP_lat_4 = sp_lat(4,rawIF_idxs);
-%SP_lon_4 = sp_lon(4,rawIF_idxs) - 360;
-SP_lon_4 = sp_lon(4,rawIF_idxs);
-prn_code4 = prn_code(4,rawIF_idxs);
-PRN4 = prn_code4(1)
-ddm_ant4 = ddm_ant(4,rawIF_idxs);
-ANT4 = ddm_ant4(1)
-sp_dopp4 = sp_ddmi_dopp(4,rawIF_idxs);
-start_dopp4 = sp_dopp4(4)
-end_dopp4 = sp_dopp4(rawIF_duration);
-dopp_rate4 = (end_dopp4 - start_dopp4)/rawIF_duration
-aa = sp_rx_gain(4,rawIF_idxs);
-bb = aa(isnan(aa)==0);
-SP_mean_gain4 = mean(bb)
+fprintf('Channel: 3. PRN: %d. Ant = %d. Start/Stop Dopper: %.3f/%.3f. Doppler rate: %.6f. SP mean gain: %.6f\n', PRN3, ANT3, start_dopp3, end_dopp3, dopp_rate3, SP_mean_gain3)
+
+
+SP_lat_4        = sp_lat(4,rawIF_idxs);
+% SP_lon_4        = sp_lon(4,rawIF_idxs) - 360;
+SP_lon_4        = sp_lon(4,rawIF_idxs);
+prn_code4       = prn_code(4,rawIF_idxs);
+PRN4            = prn_code4(1);
+ddm_ant4        = ddm_ant(4,rawIF_idxs);
+ANT4            = ddm_ant4(1);
+sp_dopp4        = sp_ddmi_dopp(4,rawIF_idxs);
+start_dopp4     = sp_dopp4(4);
+end_dopp4       = sp_dopp4(rawIF_duration);
+dopp_rate4      = (end_dopp4 - start_dopp4)/rawIF_duration;
+aa              = sp_rx_gain(4,rawIF_idxs);
+bb              = aa(isnan(aa)==0);
+SP_mean_gain4   = mean(bb);
+
+fprintf('Channel: 4. PRN: %d. Ant = %d. Start/Stop Dopper: %.3f/%.3f. Doppler rate: %.6f. SP mean gain: %.6f\n', PRN4, ANT4, start_dopp4, end_dopp4, dopp_rate4, SP_mean_gain4)
+
 
 %% New matlab colors
 black         = "#FFFFFF";
 new_blue      = "#0072BD";
 new_red       = "#D95319";
-new_yellow    = "#EDB120"
+new_yellow    = "#EDB120";
 new_purple    = "#7E2F8E";
 new_green     = "#77AC30";
 new_cyan      = "#4DBEEE";
-new_burgundy  = "#A2142F"
+new_burgundy  = "#A2142F";
 
 %linemarker        = '*'
-linemarker        = '.'
+linemarker        = '.';
 
 figure(1)
 hold on

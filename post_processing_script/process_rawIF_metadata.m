@@ -24,10 +24,9 @@ satid_hex2FM = [247 249 43 44 47 54 55 73];
 %fid = fopen('../../../OnOrbitData/FM8/cyg08_raw_if_20170825_141629_meta.bin');
 %fid = fopen('../../../CYGNSS/RawIF/May15_Australia/RawIF_Data/cyg08_raw_if_20180515_215055_meta.bin');
 %fid = fopen('/media/gleason/Elements/CYGNSS_Data/rawIF/136/cyg08_raw_if_20200515_231925_meta.bin');
-file_path
-meta_file
-full_filepath = fullfile( file_path, meta_file )
-fid = fopen( full_filepath );
+
+full_filepath   = fullfile( file_path, meta_file )
+fid             = fopen( full_filepath );
 
 satIDhex = dec2hex(fread(fid,1,'uint8')); % hex ID of satellite (need "decoder ring" to match to FM#)
 satIDdec = hex2dec(satIDhex);
@@ -41,10 +40,13 @@ dataformat = fread(fid,1,'uint8'); % decimal
 % See 148-0354-2 CYGNSS Raw IF Data File Format.pdf for rest of data entries
 % The gpssecs and dataformat are the 2 most important
 
-%satIDhex
-satID_FM
-gpsweek
-gpssecs
+% satIDhex
+% satIDdec
+% satID_FM
+% gpsweek
+% gpssecs
+
+fprintf('%s. satIDhex %s. satID: %d. GPS week: %d. GPS sec: %d \n',hdr, satIDhex, satIDdec, gpsweek, gpssecs)
 
 if(dataformat == 0)
   disp('Channel 1, I Only ... double check, unusual')
