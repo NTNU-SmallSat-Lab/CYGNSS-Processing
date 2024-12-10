@@ -27,18 +27,22 @@ See the post processing scripts for check to check the data format.
 
 ## Repo Contents
 
-### Documentation
+### [Documentation](https://github.com/NTNU-SmallSat-Lab/CYGNSS-Processing/tree/main/documentation)
 Instructions for building the C code and an example of how to perform the processing on a Raw IF collection
 
-### Makefile Build C
+### [Makefile Build C](https://github.com/NTNU-SmallSat-Lab/CYGNSS-Processing/tree/main/makefile_build_c)
 C code and Makefile for processing the binary Raw IF files. Instructions for how to create the build environment to build the code can be found in the 'documentation' directory
 
 See README in makefile_build_c folder for a guide on how build and run the c-code processing using Docker container.
 
-### Post Processing Scripts
+### [Post Processing Scripts](https://github.com/NTNU-SmallSat-Lab/CYGNSS-Processing/tree/main/post_processing_script)
 Matlab/Octave code for analyzing on the results of the C code
 
 Note: Not all post-processing scripts are compatible with current Matlab versions. Octave is recommended.
+
+Relevant data sources for post processing:
+* [CYGNSS Level 1 Science Data Record Version 3.2](https://podaac.jpl.nasa.gov/dataset/CYGNSS_L1_V3.2) 
+* [CYGNSS Level 1 Raw Intermediate Frequency Data Record](https://podaac.jpl.nasa.gov/dataset/CYGNSS_L1_RAW_IF)
 
 ## Raw intermediate frequency (IF) sample input data files
 CYGNSS Raw IF files that are used as input for this processing can be downloaded from the PO.DAAC at [https://podaac.jpl.nasa.gov/dataset/CYGNSS_L1_RAW_IF](https://podaac.jpl.nasa.gov/dataset/CYGNSS_L1_RAW_IF)
@@ -61,7 +65,9 @@ The files (*data.bin and *meta.bin) is download to said folder. The download can
 University of Michigan (UMICH) is listing all of the CYGNSS data products [https://cygnss.engin.umich.edu/data-products/ ](ttps://cygnss.engin.umich.edu/data-products/)
 
 To download:
-* Go to [https://cygnss.engin.umich.edu/data-products/ ](ttps://cygnss.engin.umich.edu/data-products/)
+* Go to [https://cygnss.engin.umich.edu/data-products/](https://cygnss.engin.umich.edu/data-products/)
 * Click on the data product of choice.
 * Then hit 'Data Access'
 * Click link under 'Search Granules' and do the search.
+
+See [CYGNSS Level 1 Science Data Record Version 3.2](https://podaac.jpl.nasa.gov/dataset/CYGNSS_L1_V3.2) for Level 1 Science Data V3.2. This can be useful for plotting the tracks of the observations using tools in the [Post Processing Script](https://github.com/NTNU-SmallSat-Lab/CYGNSS-Processing/tree/main/post_processing_script) folder.
