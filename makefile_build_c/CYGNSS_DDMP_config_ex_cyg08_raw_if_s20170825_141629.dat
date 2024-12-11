@@ -1,0 +1,31 @@
+% Script to process ASCII int8 raw data
+% the "^" activates the line, otherwise it is ignored
+% Only select one search at a time (for now)
+
+% Cold Search flag
+% adjust other processing params 'T' -> only 1sec, 'D' -> wide Doppler range ~50k, zenith antenna (1) 'P' -> 1-10 non-coh
+^C 0
+C 1
+
+% Define Time processing (relative to start of file, second 0.0)
+% start second, end second, second step
+%^T 1.0 2.0 1.0
+^T 1.0 1.0 1.0
+
+% Define Input Raw IF File Name
+% F filename with path
+^F ./RawIFData/cyg08_raw_if_s20170825_141629_e20170825_141729_data.bin
+% Define second by second center Doppler frequencies
+% D PRN, antenna, Doppler range Hz, Doppler step Hz, Doppler Start, First Derivative Doppler, Second Derivative Doppler 
+% or as given in doc. 148-0397-01:
+% D PRN, antenna, Doppler range Hz, Doppler step Hz, Doppler Center, Delta Doppler (Applied relative to the start second if not 0), Delta Doppler rate (Applied relative to the start second if not 0). 
+% example params from Processing_CYGNSS_RAWIF_Collection_Example.pdf from 'documention' folder. Running on cyg08_raw_if_s20170825_141629_e20170825_141729_data.bin:
+^D 28 3 6000 200 1500 0 0  
+%^D 28 3 6000 200 4000 0 0 
+%^D 28 3 5000 200 1500 -27 0
+
+% Define General Processing Parameters
+% sampling freq, IF freq, num channels (3), non-coh averaging interval (ms), down sample delay resolution 
+% down sample=1=sampling freq=approx 1/16 chip delay steps, down sample=2=approx 1/8 chip delay steps, etc
+% IF freq updated to 3872200 (from 3872400) based on testing by Giuseppe Grieco (8th-Oct-2018)
+^P 16036200 3872200 3 1000 1
