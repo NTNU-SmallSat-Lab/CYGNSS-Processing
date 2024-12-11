@@ -135,9 +135,10 @@ for DDM_idx = 1:numDDMentries
   Max_Delay(DDM_idx) = Delay_axis(max_delay_idx);
 
   if(SNR_dB(DDM_idx) > 3)
-    PRN(DDM_idx)
-    Max_Doppler(DDM_idx)
-    SNR_dB(DDM_idx)
+    fprintf('PRN: %d. Max Doppler: %.2f. Max SNR_dB: %.3f\n', PRN(DDM_idx),Max_Doppler(DDM_idx),SNR_dB(DDM_idx));
+    %PRN(DDM_idx)
+    %Max_Doppler(DDM_idx)
+    %SNR_dB(DDM_idx)
   end
 
   if(plot_delay_waveforms == 1)
