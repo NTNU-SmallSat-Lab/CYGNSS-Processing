@@ -200,8 +200,31 @@ if(plot_full_ddms == 1)
 %  imagesc(Doppler_axis,Delay_axis,DDM');
   % imagesc(DDM);
   imagesc(flipud(DDM'));
-  ylabel('Delay (Code Phase)');
-  xlabel('Doppler (Hz)');
+  ylabel('Delay (Code Phase) [chips]');
+  xlabel('Doppler (kHz)');  
+  step_val      = 4;
+  plot_ticks    = 1:step_val:numDopplers(DDM_idx);
+  xticks(plot_ticks)
+  n_plot_ticks      = length( plot_ticks );
+  Doppler_axis_plot = (StartDoppler(DDM_idx):step_val*DopplerStep(DDM_idx):EndDoppler(DDM_idx))/1;
+  n_ticks           = length( Doppler_axis_plot );
+  plot_ticks_label  = cell(1,n_plot_ticks);
+  for idx = 1:n_ticks
+    plot_ticks_label{idx} = sprintf('%d',Doppler_axis_plot(idx));
+  end
+  xticklabels( plot_ticks_label )
+  step_val          = 100;
+  plot_ticks        = 1:1/DelayStep_Chips(DDM_idx)*step_val:numDelays(DDM_idx);
+  yticks( plot_ticks )
+  n_ticks           = length( plot_ticks );
+  Delay_axis_plot   = 0:step_val:numDelays(DDM_idx)*DelayStep_Chips(DDM_idx)-1;
+  % Delay_axis_plot   = (plot_ticks-1)*DelayStep_Chips(DDM_idx);
+  for idx = 1:n_ticks
+    plot_ticks_label{idx} = sprintf('%.3f',Delay_axis_plot(idx));
+  end
+  yticklabels( plot_ticks_label )
+
+
   str = sprintf("Full DDM: SC %d PRN %d, DDM Number %d",sc_id, PRN(DDM_idx),DDM_idx);
   title(str)
   colorbar
