@@ -22,18 +22,20 @@ satid_hex2FM = [247 249 43 44 47 54 55 73];
 %% Path Config
 % path to processed DDM. Default 'Processed_DDMs.bin'
 %ddm_bin_file_name = 'Processed_DDMs_cyg04_raw_if_s20171130_234500_e20171130_234600_data';
-ddm_bin_file_name = 'Processed_DDMs_cyg01_raw_if_s20180822_142659_e20180822_142759_data';
+%ddm_bin_file_name = 'Processed_DDMs_cyg01_raw_if_s20180822_142659_e20180822_142759_data';
 ddm_bin_file_name = 'Processed_DDMs';
 %ddm_bin_file_name = 'Processed_DDMs_cyg08_raw_if_s20171230_000830_e20171230_000930_data';
 
 
-meta_data_path          = '/Users/thb/Kode/NTNU/CYGNSS-Processing/makefile_build_c/RawIFData'; % path of the processed raw if data's meta
-meta_data_path          = '/Users/thb/Library/CloudStorage/OneDrive-NTNU/Prosjekter/GNSS-R/CYGNSS data'; % path of the processed raw if data's meta
+%meta_data_path          = '/Users/thb/Kode/NTNU/CYGNSS-Processing/makefile_build_c/RawIFData'; % path of the processed raw if data's meta
+meta_data_path          = '/Users/thb/Kode/NTNU/gnssr-processing/CYGNSS-Processing/makefile_build_c/RawIFData/';
+%meta_data_path          = '/Users/thb/Library/CloudStorage/OneDrive-NTNU/Prosjekter/GNSS-R/CYGNSS data'; % path of the processed raw if data's meta
 
-meta_data_file_name     = 'cyg04_raw_if_s20171130_234500_e20171130_234600_meta.bin';
+%meta_data_file_name     = 'cyg04_raw_if_s20171130_234500_e20171130_234600_meta.bin';
 %meta_data_file_name     = 'cyg01_raw_if_s20180822_142659_e20180822_142759_meta.bin';
 %meta_data_file_name     = 'cyg08_raw_if_s20171230_000830_e20171230_000930_meta.bin';
-meta_data_file_name     = 'cyg01_raw_if_s20180822_142659_e20180822_142759_meta.bin';
+%meta_data_file_name     = 'cyg01_raw_if_s20180822_142659_e20180822_142759_meta.bin';
+meta_data_file_name     = 'cyg08_raw_if_s20170825_141629_e20170825_141729_meta.bin';
 meta_data_file          = fullfile( meta_data_path, meta_data_file_name );
 
 % finding space craft ID
@@ -165,82 +167,81 @@ for DDM_idx = 1:numDDMentries
     end
   end
 
-if(plot_cropped_ddms == 1)
-  % plot cropped DDM
-  h = figure(100);
-  imagesc(flipud(DDM2));
-%  imagesc(Doppler_axis2,Delay_axis2,flipud(DDM2));
-  ylabel('Delay Bins');
-  xlabel('Doppler Bins');
-%  ylabel('Delay (chips)');
-%  xlabel('Doppler (Hz)');
-  str = sprintf("Raw IF Processed DDM: SC %d, PRN %d, DDM Number %d",sc_id, PRN(DDM_idx),DDM_idx);
-  title(str)
-  colorbar
-  drawnow;
-%  axis([3000 8000 470 490])
-  pause(1)
-  if store_images
-    if exist('OCTAVE_VERSION', 'builtin') > 0 % running octave
-        print ("-r600", sprintf("%s_cropped_ddm.png",ddm_bin_file_name));
-    else
-        exportgraphics(h,sprintf("%s_cropped_ddm.png",ddm_bin_file_name),'Resolution',600)
+  if(plot_cropped_ddms == 1)
+    % plot cropped DDM
+    h = figure(100);
+    imagesc(flipud(DDM2));
+  %  imagesc(Doppler_axis2,Delay_axis2,flipud(DDM2));
+    ylabel('Delay Bins');
+    xlabel('Doppler Bins');
+  %  ylabel('Delay (chips)');
+  %  xlabel('Doppler (Hz)');
+    str = sprintf("Raw IF Processed DDM: SC %d, PRN %d, DDM Number %d",sc_id, PRN(DDM_idx),DDM_idx);
+    title(str)
+    colorbar
+    drawnow;
+  %  axis([3000 8000 470 490])
+    pause(1)
+    if store_images
+      if exist('OCTAVE_VERSION', 'builtin') > 0 % running octave
+          print ("-r600", sprintf("%s_cropped_ddm.png",ddm_bin_file_name));
+      else
+          exportgraphics(h,sprintf("%s_cropped_ddm.png",ddm_bin_file_name),'Resolution',600)
+      end
     end
+    %
+    % if(0)
+    %  filename = ['images/' num2str(DDM_idx,"%03d") '_imageframe.jpg'];
+    %  print(filename,'-djpg')
+    % end
   end
-  % 
-  % if(0)
-  %  filename = ['images/' num2str(DDM_idx,"%03d") '_imageframe.jpg'];
-  %  print(filename,'-djpg')
-  % end
-end
 
-if(plot_full_ddms == 1)
-  % plot full DDM
-  h = figure(200);
-%  imagesc(Doppler_axis,Delay_axis,DDM');
-  % imagesc(DDM);
-  imagesc(flipud(DDM'));
-  ylabel('Delay (Code Phase) [chips]');
-  xlabel('Doppler (kHz)');  
-  step_val      = 4;
-  plot_ticks    = 1:step_val:numDopplers(DDM_idx);
-  xticks(plot_ticks)
-  n_plot_ticks      = length( plot_ticks );
-  Doppler_axis_plot = (StartDoppler(DDM_idx):step_val*DopplerStep(DDM_idx):EndDoppler(DDM_idx))/1;
-  n_ticks           = length( Doppler_axis_plot );
-  plot_ticks_label  = cell(1,n_plot_ticks);
-  for idx = 1:n_ticks
-    plot_ticks_label{idx} = sprintf('%d',Doppler_axis_plot(idx));
-  end
-  xticklabels( plot_ticks_label )
-  step_val          = 100;
-  plot_ticks        = 1:1/DelayStep_Chips(DDM_idx)*step_val:numDelays(DDM_idx);
-  yticks( plot_ticks )
-  n_ticks           = length( plot_ticks );
-  Delay_axis_plot   = 0:step_val:numDelays(DDM_idx)*DelayStep_Chips(DDM_idx)-1;
-  % Delay_axis_plot   = (plot_ticks-1)*DelayStep_Chips(DDM_idx);
-  for idx = 1:n_ticks
-    plot_ticks_label{idx} = sprintf('%.3f',Delay_axis_plot(idx));
-  end
-  yticklabels( plot_ticks_label )
-
-
-  str = sprintf("Full DDM: SC %d PRN %d, DDM Number %d",sc_id, PRN(DDM_idx),DDM_idx);
-  title(str)
-  colorbar
-  pause(1)
-  if store_images
-    if exist('OCTAVE_VERSION', 'builtin') > 0 % running octave
-        print ("-r600", sprintf("%s_full_ddm.png",ddm_bin_file_name));
-    else
-        exportgraphics(h,sprintf("%s_full_ddm.png",ddm_bin_file_name),'Resolution',600)
+  if(plot_full_ddms == 1)
+    % plot full DDM
+    h = figure(200);
+  %  imagesc(Doppler_axis,Delay_axis,DDM');
+    % imagesc(DDM);
+    imagesc(flipud(DDM'));
+    ylabel('Delay (Code Phase) [chips]');
+    xlabel('Doppler (kHz)');
+    step_val      = 4;
+    plot_ticks    = 1:step_val:numDopplers(DDM_idx);
+    xticks(plot_ticks)
+    n_plot_ticks      = length( plot_ticks );
+    Doppler_axis_plot = (StartDoppler(DDM_idx):step_val*DopplerStep(DDM_idx):EndDoppler(DDM_idx))/1;
+    n_ticks           = length( Doppler_axis_plot );
+    plot_ticks_label  = cell(1,n_plot_ticks);
+    for idx = 1:n_ticks
+      plot_ticks_label{idx} = sprintf('%d',Doppler_axis_plot(idx));
     end
+    xticklabels( plot_ticks_label )
+    step_val          = 100;
+    plot_ticks        = 1:1/DelayStep_Chips(DDM_idx)*step_val:numDelays(DDM_idx);
+    yticks( plot_ticks )
+    n_ticks           = length( plot_ticks );
+    Delay_axis_plot   = 0:step_val:numDelays(DDM_idx)*DelayStep_Chips(DDM_idx)-1;
+    % Delay_axis_plot   = (plot_ticks-1)*DelayStep_Chips(DDM_idx);
+    for idx = 1:n_ticks
+      plot_ticks_label{idx} = sprintf('%d',Delay_axis_plot(idx));
+    end
+    yticklabels( plot_ticks_label )
+
+
+    str = sprintf("Full DDM: SC %d PRN %d, DDM Number %d",sc_id, PRN(DDM_idx),DDM_idx);
+    title(str)
+    colorbar
+    pause(1)
+    if store_images
+      if exist('OCTAVE_VERSION', 'builtin') > 0 % running octave
+          print ("-r600", sprintf("%s_full_ddm.png",ddm_bin_file_name));
+      else
+          exportgraphics(h,sprintf("%s_full_ddm.png",ddm_bin_file_name),'Resolution',600)
+      end
+    end
+  %  axis([startDoppler(DDM_idx) endDoppler(DDM_idx) 1 numDelays(DDM_idx) 0 6e12])
   end
-%  axis([startDoppler(DDM_idx) endDoppler(DDM_idx) 1 numDelays(DDM_idx) 0 6e12])
-end
-pause(1);
+  pause(1)
 end  % end DDM loop
-
 %PRN
 %Max_Doppler
 %Max_Delay
