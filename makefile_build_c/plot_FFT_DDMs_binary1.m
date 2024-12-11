@@ -141,6 +141,8 @@ for DDM_idx = 1:numDDMentries
   end
 
   if(plot_delay_waveforms == 1)
+    % study. stange that the specural peak is more delayed than the second
+    % peak
     h = figure(1);
     color_idx = mod(DDM_idx,length(colors));
     if(color_idx == 0)
@@ -173,6 +175,7 @@ if(plot_cropped_ddms == 1)
 %  xlabel('Doppler (Hz)');
   str = sprintf("Raw IF Processed DDM: SC %d, PRN %d, DDM Number %d",sc_id, PRN(DDM_idx),DDM_idx);
   title(str)
+  colorbar
   drawnow;
 %  axis([3000 8000 470 490])
   pause(1)
@@ -194,11 +197,11 @@ if(plot_full_ddms == 1)
   % plot full DDM
   h = figure(200);
 %  imagesc(Doppler_axis,Delay_axis,DDM');
-  imagesc(DDM);
+  % imagesc(DDM);
+  imagesc(flipud(DDM'));
   ylabel('Delay (Code Phase)');
   xlabel('Doppler (Hz)');
   str = sprintf("Full DDM: SC %d PRN %d, DDM Number %d",sc_id, PRN(DDM_idx),DDM_idx);
-  title(str)
   title(str)
   colorbar
   pause(1)
