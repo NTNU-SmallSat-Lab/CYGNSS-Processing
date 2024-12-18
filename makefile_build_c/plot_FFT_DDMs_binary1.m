@@ -47,17 +47,24 @@ satID_FM                = find(satid_hex2FM == satIDdec);
 sc_id                   = satID_FM;
 
 %% Config plotting
-%plot_full_ddms          = 0;
-plot_full_ddms          = 1;
+% plot_full_ddms              = 0;
+plot_full_ddms              = 1;
 
-%plot_cropped_ddms       = 0;
-plot_cropped_ddms       = 1;
+% plot_cropped_ddms           = 0;
+plot_cropped_ddms           = 1;
 
-%plot_delay_waveforms    = 0;
-plot_delay_waveforms    = 1;
+% plot_delay_waveforms        = 0;
+plot_delay_waveforms        = 1;
 
-%store_images            = 0;
-store_images            = 1;
+plot_full_non_fliped_ddms   = 0;
+% plot_full_non_fliped_ddms   = 1;
+
+store_images                = 0;
+% store_images                = 1;
+
+%% Setting DDM color map
+% color_bar_type = 'parula'; % default
+color_bar_type = 'turbo';   % red strongest colors   
 
 %% Generating images
 binaryFilename = sprintf('%s.bin',ddm_bin_file_name);
@@ -72,28 +79,30 @@ fid = fopen(binaryFilename);
 % read in dimensions of the DDM
 numDDMentries = fread(fid, 1, 'int');
 
-if(plot_cropped_ddms == 1)
-  % cropped DDM
-  figure(100);
-  colorbar;
-  pause(1)
-end
+% if(plot_cropped_ddms == 1)
+%   % cropped DDM
+%   figure(100);
+%   colorbar;
+%   pause(1)
+% end
+% 
+% if(plot_full_ddms == 1)
+%   % Full DDMs
+%   figure(200);
+%   colorbar;
+% end
+% 
+% if(plot_delay_waveforms == 1)
+%   % Delay Waveforms
+%   figure(1);
+%   hold on
+%   ylabel('Signal Magntitude (power)');
+%   xlabel('Delay (Code Phase)');
+%   title('Delay Waveforms');
+% end
 
-if(plot_full_ddms == 1)
-  % Full DDMs
-  figure(200);
-  colorbar;
-end
-
-if(plot_delay_waveforms == 1)
-  % Delay Waveforms
-  figure(1);
-  hold on
-  ylabel('Signal Magntitude (power)');
-  xlabel('Delay (Code Phase)');
-  title('Delay Waveforms');
-end
-
+c_legend            = {}; % for plotting wave forms
+c_legend_not_fliped = {}; % for plotting wave forms in non-flipped form
 for DDM_idx = 1:numDDMentries
 
   % read in meta data for this DDM
@@ -119,86 +128,93 @@ for DDM_idx = 1:numDDMentries
   Delay_axis = [0:DelayStep_Chips(DDM_idx):numDelays(DDM_idx)*DelayStep_Chips(DDM_idx)-DelayStep_Chips(DDM_idx)];
 
   % read in DDM
-  doubles2read = numDopplers(DDM_idx)*numDelays(DDM_idx);
-  DDM_data = fread(fid,doubles2read,'double');
-  DDM = reshape(DDM_data,numDelays(DDM_idx),numDopplers(DDM_idx));
-  DDM = DDM';  % transpose it
+  doubles2read      = numDopplers(DDM_idx)*numDelays(DDM_idx);
+  DDM_data          = fread(fid,doubles2read,'double');
+  DDM               = reshape(DDM_data,numDelays(DDM_idx),numDopplers(DDM_idx));
+  DDM               = DDM';  % transpose it
 
-  antenna(DDM_idx) = fread(fid, 1, 'unsigned int');
+  antenna(DDM_idx)  = fread(fid, 1, 'unsigned int');
 
   [DDM2,max_dopp_idx,max_delay_idx] = crop_DDM(DDM,buffer_delay_size,buffer_dopp_size,numDelays,numDopplers);
 %  Doppler_axis2 = Doppler_axis(max_dopp_idx-buffer_dopp_size:max_dopp_idx+buffer_dopp_size);
 %  Delay_axis2 = Delay_axis(max_delay_idx-buffer_delay_size:max_delay_idx+buffer_delay_size);
 
-  noise_temp = mean(mean(DDM2(1:10,:))); % first rows of cropped DDM
-  signal_max(DDM_idx) = max(max(DDM2)); % max
-  SNR_dB(DDM_idx) = 10*log10(signal_max(DDM_idx)/noise_temp);
-  Max_Doppler(DDM_idx) = Doppler_axis(max_dopp_idx);
-  Max_Delay(DDM_idx) = Delay_axis(max_delay_idx);
+  noise_temp            = mean(mean(DDM2(1:10,:))); % first rows of cropped DDM
+  signal_max(DDM_idx)   = max(max(DDM2)); % max
+  SNR_dB(DDM_idx)       = 10*log10(signal_max(DDM_idx)/noise_temp);
+  Max_Doppler(DDM_idx)  = Doppler_axis(max_dopp_idx);
+  Max_Delay(DDM_idx)    = Delay_axis(max_delay_idx);
 
   if(SNR_dB(DDM_idx) > 3)
-    fprintf('PRN: %d. Max Doppler: %.2f. Max SNR_dB: %.3f\n', PRN(DDM_idx),Max_Doppler(DDM_idx),SNR_dB(DDM_idx));
+    fprintf('PRN: %d. DDM: %d. Max Doppler: %.2f. Max SNR_dB: %.3f\n', PRN(DDM_idx),DDM_idx, Max_Doppler(DDM_idx),SNR_dB(DDM_idx));
     %PRN(DDM_idx)
     %Max_Doppler(DDM_idx)
     %SNR_dB(DDM_idx)
   end
 
   if(plot_delay_waveforms == 1)
-    % study. stange that the specural peak is more delayed than the second
-    % peak
+    %% Plotting waveform
     h = figure(1);
     color_idx = mod(DDM_idx,length(colors));
     if(color_idx == 0)
         color_idx = 6;
     end
-    plot(Delay_axis,DDM(max_dopp_idx,:)*1e-9,Color=colors(color_idx));
-    % 	plot(DDM(max_dopp_idx,:),Color=colors(color_idx));
+    hold on
+    %plot(Delay_axis,DDM(max_dopp_idx,:)*1e-9,Color=colors(color_idx));
+    %
+    % fliped the x-axis to make the Delay peak logical. More testing needed
+    if numDDMentries == 1
+        plot(-Delay_axis+Delay_axis(end),DDM(max_dopp_idx,:)*1e-9, Color=colors(color_idx)); 
+    else
+        plot(-Delay_axis+Delay_axis(end),DDM(max_dopp_idx,:)*1e-9, 'linestyle','-.', Color=colors(color_idx)); 
+    end
+    hold off;
     ylabel('Signal Magntitude (power scale 1e-9)');
+    xlabel('Delay [chips]')
+    xlim([0 1024])
     str = sprintf("Delay Waveform: SC %d, PRN %d, DDM Number %d",sc_id, PRN(DDM_idx),DDM_idx);
     title(str)
+    c_legend{length(c_legend)+1} = sprintf('DDM%d',DDM_idx);
+    legend(c_legend)
     grid on;
-    pause(1)
+    % pause(1)
     if store_images
         if exist('OCTAVE_VERSION', 'builtin') > 0 % running octave
-            print ("-r600", sprintf("%s_wave_form_ddm.png",ddm_bin_file_name));
+            print ("-r600", sprintf("%s_wave_form_ddm%d.png",ddm_bin_file_name,DDM_idx));
         else
-            exportgraphics(h,sprintf("%s_wave_form_ddm.png",ddm_bin_file_name),'Resolution',600)
+            exportgraphics(h,sprintf("%s_wave_form_ddm%d.png",ddm_bin_file_name,DDM_idx),'Resolution',600)
         end
     end
   end
 
+  %% Plotting cropped DDM
   if(plot_cropped_ddms == 1)
     % plot cropped DDM
-    h = figure(100);
+    h = figure(100+DDM_idx);
     imagesc(flipud(DDM2));
-  %  imagesc(Doppler_axis2,Delay_axis2,flipud(DDM2));
     ylabel('Delay Bins');
     xlabel('Doppler Bins');
   %  ylabel('Delay (chips)');
   %  xlabel('Doppler (Hz)');
     str = sprintf("Raw IF Processed DDM: SC %d, PRN %d, DDM Number %d",sc_id, PRN(DDM_idx),DDM_idx);
     title(str)
-    colorbar
+    map = colormap(color_bar_type);
+    colorbar;
     drawnow;
-  %  axis([3000 8000 470 490])
-    pause(1)
+    % pause(1)
     if store_images
       if exist('OCTAVE_VERSION', 'builtin') > 0 % running octave
-          print ("-r600", sprintf("%s_cropped_ddm.png",ddm_bin_file_name));
+          print ("-r600", sprintf("%s_cropped_ddm%d.png", ddm_bin_file_name, DDM_idx));
       else
-          exportgraphics(h,sprintf("%s_cropped_ddm.png",ddm_bin_file_name),'Resolution',600)
+          exportgraphics(h,sprintf("%s_cropped_ddm%d.png", ddm_bin_file_name, DDM_idx),'Resolution',600)
       end
     end
-    %
-    % if(0)
-    %  filename = ['images/' num2str(DDM_idx,"%03d") '_imageframe.jpg'];
-    %  print(filename,'-djpg')
-    % end
   end
 
+  %% Plotting full DDM
   if(plot_full_ddms == 1)
     % plot full DDM
-    h = figure(200);
+    h = figure(200+DDM_idx);
   %  imagesc(Doppler_axis,Delay_axis,DDM');
     % imagesc(DDM);
     imagesc(flipud(DDM'));
@@ -229,18 +245,97 @@ for DDM_idx = 1:numDDMentries
 
     str = sprintf("Full DDM: SC %d PRN %d, DDM Number %d",sc_id, PRN(DDM_idx),DDM_idx);
     title(str)
+    map = colormap(color_bar_type);
     colorbar
-    pause(1)
+    %pause(1)
     if store_images
       if exist('OCTAVE_VERSION', 'builtin') > 0 % running octave
-          print ("-r600", sprintf("%s_full_ddm.png",ddm_bin_file_name));
+          print ("-r600", sprintf("%s_full_ddm%d.png", ddm_bin_file_name, DDM_idx));
       else
-          exportgraphics(h,sprintf("%s_full_ddm.png",ddm_bin_file_name),'Resolution',600)
+          exportgraphics(h,sprintf("%s_full_ddm%d.png", ddm_bin_file_name, DDM_idx),'Resolution',600)
       end
     end
   %  axis([startDoppler(DDM_idx) endDoppler(DDM_idx) 1 numDelays(DDM_idx) 0 6e12])
   end
-  pause(1)
+  %
+  %
+  %% Plotting non flipped DDMs 
+  % axis needs to be fixed
+  if(plot_full_non_fliped_ddms == 1)
+
+    h = figure(2);
+    color_idx = mod(DDM_idx,length(colors));
+    if(color_idx == 0)
+        color_idx = 6;
+    end
+    hold on
+    %plot(Delay_axis,DDM(max_dopp_idx,:)*1e-9,Color=colors(color_idx));
+    %
+    % fliped the x-axis to make the Delay logical should be tested
+    if numDDMentries == 1
+        plot(Delay_axis, DDM(max_dopp_idx,:)*1e-9, Color=colors(color_idx)); 
+    else
+        plot(Delay_axis, DDM(max_dopp_idx,:)*1e-9, 'linestyle','-.', Color=colors(color_idx)); 
+    end
+    c_legend_not_fliped{length(c_legend_not_fliped)+1} = sprintf('DDM%d',DDM_idx);
+    hold off;
+    ylabel('Signal Magntitude (power scale 1e-9)');
+    % xlabel('Delay [chips]')
+    xlim([0 1024])
+    str = sprintf("Delay Waveform: SC %d, PRN %d, DDM Number %d",sc_id, PRN(DDM_idx),DDM_idx);
+    title(str)
+    legend(c_legend)
+    grid on;
+    % pause(1)
+    if store_images
+        if exist('OCTAVE_VERSION', 'builtin') > 0 % running octave
+            print ("-r600", sprintf("%s_wave_form_ddm%d_not_fliped.png",ddm_bin_file_name,DDM_idx));
+        else
+            exportgraphics(h,sprintf("%s_wave_form_ddm%d_not_fliped.png",ddm_bin_file_name,DDM_idx),'Resolution',600)
+        end
+    end
+
+    % plot cropped DDM
+    h = figure(300+DDM_idx);
+    imagesc((DDM2));
+    % ylabel('Delay Bins');
+    % xlabel('Doppler Bins');
+  %  ylabel('Delay (chips)');
+  %  xlabel('Doppler (Hz)');
+    str = sprintf("Raw IF Processed DDM: SC %d, PRN %d, DDM Number %d",sc_id, PRN(DDM_idx),DDM_idx);
+    title(str)
+    map = colormap(color_bar_type);
+    colorbar()
+    drawnow;
+    if store_images
+      if exist('OCTAVE_VERSION', 'builtin') > 0 % running octave
+          print ("-r600", sprintf("%s_cropped_ddm%d_not_fliped.png", ddm_bin_file_name, DDM_idx));
+      else
+          exportgraphics(h,sprintf("%s_cropped_ddm%d_not_fliped.png", ddm_bin_file_name, DDM_idx),'Resolution',600)
+      end
+    end
+
+    % plot full DDM
+    h = figure(400+DDM_idx);
+    imagesc(DDM');
+    % ylabel('Delay (Code Phase) [chips]');
+    % xlabel('Doppler (kHz)');
+
+    str = sprintf("Full DDM: SC %d PRN %d, DDM Number %d",sc_id, PRN(DDM_idx),DDM_idx);
+    title(str)
+    map = colormap(color_bar_type);
+    colorbar
+    %pause(1)
+    if store_images
+      if exist('OCTAVE_VERSION', 'builtin') > 0 % running octave
+          print ("-r600", sprintf("%s_full_ddm%d_not_flip.png", ddm_bin_file_name, DDM_idx));
+      else
+          exportgraphics(h,sprintf("%s_full_ddm%d_not_flip.png", ddm_bin_file_name, DDM_idx),'Resolution',600)
+      end
+    end
+  %  axis([startDoppler(DDM_idx) endDoppler(DDM_idx) 1 numDelays(DDM_idx) 0 6e12])
+  end
+  %pause(1)
 end  % end DDM loop
 %PRN
 %Max_Doppler
