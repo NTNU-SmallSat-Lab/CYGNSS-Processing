@@ -106,50 +106,47 @@ c_legend_not_fliped = {}; % for plotting wave forms in non-flipped form
 for DDM_idx = 1:numDDMentries
 
   % read in meta data for this DDM
-  DDM_hdr = char(fread(fid, 4, 'char'));
-  DDM_log_counter(DDM_idx) = fread(fid, 1, 'int');
-  GPSweek(DDM_idx) = fread(fid, 1, 'int');
-  GPSSecond(DDM_idx) = fread(fid, 1, 'double');
-  CurrentSecond(DDM_idx) = fread(fid, 1, 'double');
+  DDM_hdr                   = char(fread(fid, 4, 'char'));
+  DDM_log_counter(DDM_idx)  = fread(fid, 1, 'int');
+  GPSweek(DDM_idx)          = fread(fid, 1, 'int');
+  GPSSecond(DDM_idx)        = fread(fid, 1, 'double');
+  CurrentSecond(DDM_idx)    = fread(fid, 1, 'double');
   if exist('OCTAVE_VERSION', 'builtin') > 0 % running octave
-    FileOffset(DDM_idx) = fread(fid, 1, 'unsigned long long');
+    FileOffset(DDM_idx)     = fread(fid, 1, 'unsigned long long');
   else
-    FileOffset(DDM_idx) = fread(fid, 1, 'unsigned long');
-    blank               = fread(fid, 1, 'unsigned long');
+    FileOffset(DDM_idx)     = fread(fid, 1, 'unsigned long');
+    blank                   = fread(fid, 1, 'unsigned long');
   end
-  PRN(DDM_idx) = fread(fid, 1, 'short');
-  StartDoppler(DDM_idx) = fread(fid, 1, 'double');
-  EndDoppler(DDM_idx) = fread(fid, 1, 'double');
-  DopplerStep(DDM_idx) = fread(fid, 1, 'double');
-  numDopplers(DDM_idx) = floor((EndDoppler(DDM_idx) - StartDoppler(DDM_idx))/DopplerStep(DDM_idx)) + 1;
-  numDelays(DDM_idx) = fread(fid, 1, 'int');
-  DelayStep_Chips(DDM_idx) = fread(fid, 1, 'double');
-  Doppler_axis = [StartDoppler(DDM_idx):DopplerStep(DDM_idx):EndDoppler(DDM_idx)];
-  Delay_axis = [0:DelayStep_Chips(DDM_idx):numDelays(DDM_idx)*DelayStep_Chips(DDM_idx)-DelayStep_Chips(DDM_idx)];
+  PRN(DDM_idx)              = fread(fid, 1, 'short');
+  StartDoppler(DDM_idx)     = fread(fid, 1, 'double');
+  EndDoppler(DDM_idx)       = fread(fid, 1, 'double');
+  DopplerStep(DDM_idx)      = fread(fid, 1, 'double');
+  numDopplers(DDM_idx)      = floor((EndDoppler(DDM_idx) - StartDoppler(DDM_idx))/DopplerStep(DDM_idx)) + 1;
+  numDelays(DDM_idx)        = fread(fid, 1, 'int');
+  DelayStep_Chips(DDM_idx)  = fread(fid, 1, 'double');
+  Doppler_axis              = [StartDoppler(DDM_idx):DopplerStep(DDM_idx):EndDoppler(DDM_idx)];
+  Delay_axis                = [0:DelayStep_Chips(DDM_idx):numDelays(DDM_idx)*DelayStep_Chips(DDM_idx)-DelayStep_Chips(DDM_idx)];
 
   % read in DDM
-  doubles2read      = numDopplers(DDM_idx)*numDelays(DDM_idx);
-  DDM_data          = fread(fid,doubles2read,'double');
-  DDM               = reshape(DDM_data,numDelays(DDM_idx),numDopplers(DDM_idx));
-  DDM               = DDM';  % transpose it
+  doubles2read              = numDopplers(DDM_idx)*numDelays(DDM_idx);
+  DDM_data                  = fread(fid,doubles2read,'double');
+  DDM                       = reshape(DDM_data,numDelays(DDM_idx),numDopplers(DDM_idx));
+  DDM                       = DDM';  % transpose it
 
-  antenna(DDM_idx)  = fread(fid, 1, 'unsigned int');
+  antenna(DDM_idx)          = fread(fid, 1, 'unsigned int');
 
   [DDM2,max_dopp_idx,max_delay_idx] = crop_DDM(DDM,buffer_delay_size,buffer_dopp_size,numDelays,numDopplers);
 %  Doppler_axis2 = Doppler_axis(max_dopp_idx-buffer_dopp_size:max_dopp_idx+buffer_dopp_size);
 %  Delay_axis2 = Delay_axis(max_delay_idx-buffer_delay_size:max_delay_idx+buffer_delay_size);
 
-  noise_temp            = mean(mean(DDM2(1:10,:))); % first rows of cropped DDM
-  signal_max(DDM_idx)   = max(max(DDM2)); % max
-  SNR_dB(DDM_idx)       = 10*log10(signal_max(DDM_idx)/noise_temp);
-  Max_Doppler(DDM_idx)  = Doppler_axis(max_dopp_idx);
-  Max_Delay(DDM_idx)    = Delay_axis(max_delay_idx);
+  noise_temp                = mean(mean(DDM2(1:10,:))); % first rows of cropped DDM
+  signal_max(DDM_idx)       = max(max(DDM2)); % max
+  SNR_dB(DDM_idx)           = 10*log10(signal_max(DDM_idx)/noise_temp);
+  Max_Doppler(DDM_idx)      = Doppler_axis(max_dopp_idx);
+  Max_Delay(DDM_idx)        = Delay_axis(max_delay_idx);
 
-  if(SNR_dB(DDM_idx) > 3)
+  if(SNR_dB(DDM_idx) > 1.5)
     fprintf('PRN: %d. DDM: %d. Max Doppler: %.2f. Max SNR_dB: %.3f\n', PRN(DDM_idx),DDM_idx, Max_Doppler(DDM_idx),SNR_dB(DDM_idx));
-    %PRN(DDM_idx)
-    %Max_Doppler(DDM_idx)
-    %SNR_dB(DDM_idx)
   end
 
   if(plot_delay_waveforms == 1)
@@ -196,9 +193,9 @@ for DDM_idx = 1:numDDMentries
     xlabel('Doppler Bins');
   %  ylabel('Delay (chips)');
   %  xlabel('Doppler (Hz)');
-    str = sprintf("Raw IF Processed DDM: SC %d, PRN %d, DDM Number %d",sc_id, PRN(DDM_idx),DDM_idx);
+    str     = sprintf("Raw IF Processed DDM: SC %d, PRN %d, DDM Number %d",sc_id, PRN(DDM_idx),DDM_idx);
     title(str)
-    map = colormap(color_bar_type);
+    map     = colormap(color_bar_type);
     colorbar;
     drawnow;
     % pause(1)
@@ -220,15 +217,15 @@ for DDM_idx = 1:numDDMentries
     imagesc(flipud(DDM'));
     ylabel('Delay (Code Phase) [chips]');
     xlabel('Doppler (kHz)');
-    step_val      = 4;
-    plot_ticks    = 1:step_val:numDopplers(DDM_idx);
+    step_val            = 4;
+    plot_ticks          = 1:step_val:numDopplers(DDM_idx);
     xticks(plot_ticks)
-    n_plot_ticks      = length( plot_ticks );
-    Doppler_axis_plot = (StartDoppler(DDM_idx):step_val*DopplerStep(DDM_idx):EndDoppler(DDM_idx))/1;
-    n_ticks           = length( Doppler_axis_plot );
-    plot_ticks_label  = cell(1,n_plot_ticks);
+    n_plot_ticks        = length( plot_ticks );
+    Doppler_axis_plot   = (StartDoppler(DDM_idx):step_val*DopplerStep(DDM_idx):EndDoppler(DDM_idx))/1;
+    n_ticks             = length( Doppler_axis_plot );
+    plot_ticks_label    = cell(1,n_plot_ticks);
     for idx = 1:n_ticks
-      plot_ticks_label{idx} = sprintf('%d',Doppler_axis_plot(idx));
+        plot_ticks_label{idx} = sprintf('%d',Doppler_axis_plot(idx));
     end
     xticklabels( plot_ticks_label )
     step_val          = 100;
@@ -337,8 +334,3 @@ for DDM_idx = 1:numDDMentries
   end
   %pause(1)
 end  % end DDM loop
-%PRN
-%Max_Doppler
-%Max_Delay
-
-
