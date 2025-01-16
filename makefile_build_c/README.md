@@ -84,4 +84,4 @@ plot_FFT_DDMs_binary1.m
 in MATLAB or Octave.
 
 Then the output will of the croped results will look like
-![DDM example: CYG08_raw_if_s20170825_141629](/images/Processed_DDMs_cropped_ddm1.png "Title")
+![Processed_DDMs_cropped_ddm1](https://github.com/user-attachments/assets/d388644a-e0d6-45f5-90f4-fa2ab15511d4)
