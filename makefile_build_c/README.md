@@ -81,7 +81,5 @@ which will process 'RawIFData/cyg08_raw_if_s20170825_141629_e20170825_141729_dat
 ```
 plot_FFT_DDMs_binary1.m 
 ```
-in MATLAB or Octave.
-
-Then the output will of the croped results will look like
+in MATLAB or Octave. If 'RawIFData/cyg08_raw_if_s20170825_141629_e20170825_141729_data.bin' is processed with the settings in the example config, then the cropped DDM output will look like this:
 ![Processed_DDMs_cropped_ddm1](https://github.com/user-attachments/assets/d388644a-e0d6-45f5-90f4-fa2ab15511d4)
