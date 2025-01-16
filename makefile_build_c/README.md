@@ -45,7 +45,7 @@ You can simply download and install Docker for Windows, and link it to your WSL 
 * Enable docker for WSL: https://docs.docker.com/desktop/features/wsl/
 
 ## Run instructions
-* Update line 22 in 'CYGNSS_DDMP_config.dat' with downloaded .bin file containing raw IF samples
+* Update line starting with ^F in your '.dat' config file of choice an point to where you have placed the the '.bin' you would like to process file. 
 
 ### Process natively in Linux
 * Run 
@@ -55,6 +55,10 @@ You can simply download and install Docker for Windows, and link it to your WSL 
 in terminal
 
 ### Process using Docker container
+* Note: If you have created a new folder for the raw IF data (.bin) inside 'makefile_build_c' rebuild the container first with
+```
+./cygnss.sh build
+```
 * Run 
 ```
 ./cygnss.sh run
@@ -64,6 +68,11 @@ in terminal to run processing based on config in 'CYGNSS_DDMP_config.dat' on or
  ./cygnss.sh run ANOTHERDATFILE.dat'
 ```
 in the terminal to specify another .dat that used when building process via the container.
+* For first time use it is recommended to run 
+```
+ ./cygnss.sh run CYGNSS_DDMP_config_ex_cyg08_raw_if_s20170825_141629.dat'
+```
+which will process 'RawIFData/cyg08_raw_if_s20170825_141629_e20170825_141729_data.bin'.
 ### Output
 * Output file is 'Processed_DDMs.bin
 
