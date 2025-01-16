@@ -82,3 +82,6 @@ which will process 'RawIFData/cyg08_raw_if_s20170825_141629_e20170825_141729_dat
 plot_FFT_DDMs_binary1.m 
 ```
 in Octave. plot_FFT_DDMs_binary1.m is not compatible with Matlab
+
+Then the output will of the croped results will look like
+![DDM example: CYG08_raw_if_s20170825_141629](/images/Processed_DDMs_cropped_ddm1.png "Title")
